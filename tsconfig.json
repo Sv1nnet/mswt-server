@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["*"],
+      "app": ["app/*"],
+      "models/*": ["app/models/*"],
+      "utils/*": ["app/utils/*"],
+      "constants/*": ["app/constants/*"],
+      "middlewares/*": ["app/middlewares/*"],
+      "routes/*": ["app/routes/*"],
+    },
+    "target": "es6",
+    "module": "commonjs",
+    "rootDir": "./",
+    "outDir": "./build",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "strict": false
+  }
+}
