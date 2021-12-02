@@ -8,15 +8,15 @@ export default function setRoutes() {
   const router = Router();
 
   // auth
-  router.post('/auth/login', auth.login);
-  router.post('/auth/signup', auth.signup);
+  router.post('/v1/auth/login', auth.login);
+  router.post('/v1/auth/signup', auth.signup);
 
-  router.post('/auth/logout', withRefreshVerify, auth.logout);
-  router.get('/auth/refresh', withRefreshVerify, auth.refresh);
-  router.get('/auth/access', withRefreshVerify, auth.access);
+  router.post('/v1/auth/logout', withRefreshVerify, auth.logout);
+  router.get('/v1/auth/token/refresh', withRefreshVerify, auth.refresh);
+  router.post('/v1/auth/token/access', withRefreshVerify, auth.access);
 
   // user
-  router.get('/user', withAccessVerify, user.getUser);
+  router.get('/v1/user', withAccessVerify, user.getUser);
 
   return router;
 }

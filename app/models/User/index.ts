@@ -12,33 +12,11 @@ const UserSchema = new Schema<IUser>({
     minlength: 5,
     trim: true,
     unique: true,
-    validate: {
-      validator(email: string): boolean {
-        return validator.isEmail(email);
-      },
-      message: '{VALUE} is not a valid email.',
-    },
   },
   password: {
     type: String,
     required: true,
     minlength: 8,
-  },
-  nickName: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-  },
-  firstName: {
-    type: String,
-    required: false,
-    trim: true,
-  },
-  lastName: {
-    type: String,
-    required: false,
-    trim: true,
   },
   authTokens: {
     type: [

@@ -25,7 +25,7 @@ const getUser = async (req: ProjectListRequest, res: Response) => {
   } catch (error) {
     console.log(error);
     res.statusCode = 500;
-    res.json({ message: error.message || 'Something gone wrong' });
+    res.json({ message: error.message || 'Something went wrong' });
   }
 };
 

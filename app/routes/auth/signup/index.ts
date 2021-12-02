@@ -1,12 +1,14 @@
+import { createRequestError, createResponseError } from 'utils/createResponseError';
 import { Request, Response } from 'express';
-import _ from 'lodash';
-import User from '../../../models/User';
+import User from 'models/User';
 import { Credentials, IUser, Token } from 'models/User/types';
+import { createResponse } from 'utils/createResponse';
 
-const fields = ['email', 'nickName'];
+const DAYS_30 = 30 * 24 * 60 * 60 * 1000
 
 const signup = async (req: Request<Credentials>, res: Response) => {
   const { password: userPassword, ...credentials } = req.body as Credentials;
+
   try {
     let user: IUser = await new User({ ...credentials });
     user.hashPassword(userPassword!);
@@ -16,14 +18,81 @@ const signup = async (req: Request<Credentials>, res: Response) => {
     user = await user.save();
 
     res.statusCode = 200;
-    res.json(tokens);
+    res.cookie('refresh_token', tokens.refresh, { secure: false, httpOnly: true, expires: new Date(Date.now() + DAYS_30) })
+    res.json(createResponse({ token: tokens.access }));
   } catch (error) {
-    console.error(error);
-    const rawField: string = error.message.includes('duplicate key') && error.message.split('key: ')[1];
-    const field = fields.reduce((acc, f) => (rawField.includes(f) ? f : acc), '');
+    console.warn(error);
+    if (error._message === 'User validation failed') {
+      const { email, password } = error.errors
+      if (email) {
+        const { kind } = email
+        if (kind === 'minlength') {
+          const errorToSend = createRequestError(
+            'Email is too short',
+            createResponseError('invalidEmail', 403),
+          )
+          res.statusCode = errorToSend.code;
+          res.json(
+            createResponse(
+              null,
+              { ...errorToSend, message: errorToSend.message }
+            )
+          )
+        } else if (kind === 'user defined') {
+          const errorToSend = createRequestError(
+            'User exists',
+            createResponseError('userAlreadyExists', 403),
+          )
+          res.statusCode = errorToSend.code;
+          res.json(
+            createResponse(
+              null,
+              { ...errorToSend, message: errorToSend.message }
+            )
+          )
+        }
+      } else if (password) {
+        const errorToSend = createRequestError(
+          'Password invalid',
+          createResponseError('shortPassword', 403),
+        )
+        res.statusCode = errorToSend.code;
+        res.json(
+          createResponse(
+            null,
+            { ...errorToSend, message: errorToSend.message },
+          )
+        )
+      }
+      return
+    }
 
-    res.statusCode = 500;
-    res.json({ message: `User with such ${field} exists` });
+    if (error.message.includes('duplicate key')) {
+      const errorToSend = createRequestError(
+        'User exists',
+        createResponseError('userAlreadyExists', 403),
+      )
+      res.statusCode = errorToSend.code;
+      res.json(
+        createResponse(
+          null,
+          { ...errorToSend, message: errorToSend.message },
+        )
+      )
+      return
+    }
+
+    const errorToSend = createRequestError(
+      'Unknown error',
+      createResponseError('unknownError', 500),
+    )
+    res.statusCode = errorToSend.code;
+    res.json(
+      createResponse(
+        null,
+        { ...errorToSend, message: errorToSend.message },
+      )
+    )
   }
 };
 

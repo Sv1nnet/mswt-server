@@ -17,8 +17,10 @@ export interface IReqWithRefreshToken extends Request {
 
 const withRefreshVerify = async (req: IReqWithRefreshToken, res: Response, next: NextFunction) => {
   let refresh = '';
-  if (req.cookies.refresh_token) {
-    refresh = req.cookies.refresh_token;
+  const { refresh_token } = req.cookies
+
+  if (refresh_token) {
+    refresh = refresh_token;
   } else if (req.headers.authorization && req.headers.authorization.includes('Bearer ')){
     [, refresh = ''] = req.headers.authorization.split(' ') as [string, Refresh];
   }
@@ -35,7 +37,7 @@ const withRefreshVerify = async (req: IReqWithRefreshToken, res: Response, next:
     }
 
     console.log(err.message);
-    res.statusCode = 401;
+    res.statusCode = 403;
     res.json({ message: err.message || 'Token is invalid' });
   });
 };
