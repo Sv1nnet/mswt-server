@@ -1,6 +1,7 @@
 import { Request, RequestHandler, Response, NextFunction } from 'express';
 import { IncomingHttpHeaders } from 'http';
 import jwt, { Secret } from 'jsonwebtoken';
+import User from 'models/User';
 import { Decoded, Token, Refresh } from 'models/User/types';
 
 export type User = {
@@ -15,10 +16,10 @@ export interface IReqWithRefreshToken extends Request {
   headers: Headers;
 }
 
-const withRefreshVerify = async (req: IReqWithRefreshToken, res: Response, next: NextFunction) => {
+const withRefreshVerify = (req: IReqWithRefreshToken, res: Response, next: NextFunction) => {
   let refresh = '';
   const { refresh_token } = req.cookies
-
+console.log('with refresh verify')
   if (refresh_token) {
     refresh = refresh_token;
   } else if (req.headers.authorization && req.headers.authorization.includes('Bearer ')){
@@ -27,18 +28,22 @@ const withRefreshVerify = async (req: IReqWithRefreshToken, res: Response, next:
 
   const secret = process.env.JWT_REFRESH_SECRET as Secret;
 
-  jwt.verify(refresh, secret, (err, decoded: Decoded) => {
+  jwt.verify(refresh, secret, async (err, decoded: Decoded) => {
     if (!err) {
-      req.user = {
-        refresh,
-        id: decoded._id,
-      };
-      return next();
+      const user =  await User.findById(decoded._id)
+      console.log('user', user)
+      if (user.authTokens.find(token => token.refresh === refresh)) {
+        req.user = {
+          refresh,
+          id: decoded._id,
+        };
+        return next();
+      }
     }
 
-    console.log(err.message);
+    console.log('Error while token validation', err ? err.message : 'token is not found');
     res.statusCode = 403;
-    res.json({ message: err.message || 'Token is invalid' });
+    res.json({ message: err ? err.message : 'Token is invalid' });
   });
 };
 

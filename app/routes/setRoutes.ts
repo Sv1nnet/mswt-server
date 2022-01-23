@@ -3,6 +3,7 @@ import withAccessVerify from '../middlewares/withAccessVerify';
 import withRefreshVerify from '../middlewares/withRefreshVerify';
 import * as auth from './auth';
 import * as user from './user';
+import * as profile from './profile';
 
 export default function setRoutes() {
   const router = Router();
@@ -17,6 +18,8 @@ export default function setRoutes() {
 
   // user
   router.get('/v1/user', withAccessVerify, user.getUser);
+  router.get('/v1/profile', withAccessVerify, profile.getProfile);
+  router.patch('/v1/profile/update', withAccessVerify, profile.updateProfile);
 
   return router;
 }

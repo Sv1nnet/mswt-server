@@ -20,6 +20,7 @@ const login = async (req: Request<Credentials>, res: Response) => {
 
     res.statusCode = 200;
     res.cookie('refresh_token', tokens.refresh, { secure: false, httpOnly: true, expires: new Date(Date.now() + DAYS_30) })
+    res.cookie('access_token', tokens.access, { secure: false, httpOnly: true, expires: new Date(Date.now() + DAYS_30) })
     res.json(createResponse({ token: tokens.access }));
   } catch (error) {
     console.error(error);

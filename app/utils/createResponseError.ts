@@ -2,10 +2,13 @@ import { Errors, ResponseErrorProp, errors } from 'app/constants/codes'
 
 export const createRequestError = (message: string, errorObj: ResponseError) => Object.assign(new Error(message), errorObj)
 
-export const createResponseError = (type: keyof Errors, code: number, lang: 'ru' | 'eng' = 'eng') => ({
+export const createResponseError = (type: keyof Errors, code: number, lang: 'ru' | 'eng' = 'eng', validation?: object) => ({
   code,
   appCode: errors[type].code,
-  message: errors[type].message[lang] || errors[type].message.eng,
+  message: {
+    validation,
+    text: errors[type].message[lang] || errors[type].message.eng,
+  }
 })
 
 export type ResponseError = ReturnType<typeof createResponseError>

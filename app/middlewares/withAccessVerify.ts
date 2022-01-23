@@ -17,6 +17,7 @@ export interface IReqWithAccessToken extends Request {
 
 const withAccessVerify = async (req: IReqWithAccessToken, res: Response, next: NextFunction) => {
   const [, access] = req.headers.authorization ? req.headers.authorization.split(' ') as [string, Access] : ['', null];
+  // console.log('req.headers', req.headers)
   const secret = process.env.JWT_ACCESS_SECRET as Secret;
 
   if (access) {
@@ -26,6 +27,7 @@ const withAccessVerify = async (req: IReqWithAccessToken, res: Response, next: N
           access,
           id: decoded._id,
         };
+        console.log('decoded', new Date(decoded.exp * 1000))
         return next();
       }
   

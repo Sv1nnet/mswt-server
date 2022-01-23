@@ -60,7 +60,7 @@ UserSchema.methods.generateJWT = function generateJWT(type: 'reset' | 'access' |
         _id: user._id,
       },
       secret,
-      { expiresIn: type === 'reset' ? '1h' : '15m' }
+      { expiresIn: type === 'reset' ? '1h' : '15s' }
     );
   }
 
@@ -69,7 +69,7 @@ UserSchema.methods.generateJWT = function generateJWT(type: 'reset' | 'access' |
       _id: user._id,
     },
     process.env.JWT_ACCESS_SECRET!,
-    { expiresIn: '15m' }
+    { expiresIn: '15s' }
   );
   const refresh = jwt.sign(
     {
