@@ -30,9 +30,10 @@ const withAccessVerify = async (req: IReqWithAccessToken, res: Response, next: N
         console.log('decoded', new Date(decoded.exp * 1000))
         return next();
       }
-  
+      console.log('decoded', decoded)
       console.log(err.message);
       res.statusCode = 401;
+      console.log('withAccessVerify error with headers', req.headers)
       res.json({ message: err.message || 'Token is invalid' });
     });
   } else {

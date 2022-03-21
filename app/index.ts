@@ -6,6 +6,9 @@ import setRoutes from './routes/setRoutes';
 import dbConnect from './utils/db/dbConnect';
 import ip from 'utils/ips';
 import cors from 'cors';
+import path from 'path'
+
+(global as typeof globalThis).appRoot = path.resolve(__dirname)
 
 dotenv.config();
 const API = '/api';

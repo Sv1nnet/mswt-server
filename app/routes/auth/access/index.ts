@@ -21,6 +21,8 @@ const access = async (req: RefreshRequest, res: Response) => {
 
     const token = user.updateToken('access', refresh) as Token;
     await user.save();
+
+    console.log('===== after access update =====', token)
     console.log('access success 200')
     res.statusCode = 200;
     res.json({ token });

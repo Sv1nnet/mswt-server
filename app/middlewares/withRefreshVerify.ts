@@ -1,4 +1,4 @@
-import { Request, RequestHandler, Response, NextFunction } from 'express';
+import { Request, RequestHandler, Response, NextFunction, json } from 'express';
 import { IncomingHttpHeaders } from 'http';
 import jwt, { Secret } from 'jsonwebtoken';
 import User from 'models/User';
@@ -19,7 +19,7 @@ export interface IReqWithRefreshToken extends Request {
 const withRefreshVerify = (req: IReqWithRefreshToken, res: Response, next: NextFunction) => {
   let refresh = '';
   const { refresh_token } = req.cookies
-console.log('with refresh verify')
+
   if (refresh_token) {
     refresh = refresh_token;
   } else if (req.headers.authorization && req.headers.authorization.includes('Bearer ')){
@@ -28,10 +28,10 @@ console.log('with refresh verify')
 
   const secret = process.env.JWT_REFRESH_SECRET as Secret;
 
+  console.log('before refresh validation. Token:', refresh)
   jwt.verify(refresh, secret, async (err, decoded: Decoded) => {
     if (!err) {
       const user =  await User.findById(decoded._id)
-      console.log('user', user)
       if (user.authTokens.find(token => token.refresh === refresh)) {
         req.user = {
           refresh,
@@ -41,8 +41,10 @@ console.log('with refresh verify')
       }
     }
 
-    console.log('Error while token validation', err ? err.message : 'token is not found');
+    console.log('Error while token validation', err ? err.message : err);
     res.statusCode = 403;
+    res.cookie('refresh_token', '', { secure: false, httpOnly: true, expires: new Date() })
+    res.cookie('access_token', '', { secure: false, httpOnly: true, expires: new Date() })
     res.json({ message: err ? err.message : 'Token is invalid' });
   });
 };

@@ -3,6 +3,7 @@ import validator from 'validator';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { IUser, Token, Credentials } from './types';
+import { Exercise, IExercise } from '../Exercise/types';
 
 const UserSchema = new Schema<IUser>({
   email: {
@@ -17,6 +18,11 @@ const UserSchema = new Schema<IUser>({
     type: String,
     required: true,
     minlength: 8,
+  },
+  exercises: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: false,
+    default: [],
   },
   authTokens: {
     type: [
@@ -60,7 +66,7 @@ UserSchema.methods.generateJWT = function generateJWT(type: 'reset' | 'access' |
         _id: user._id,
       },
       secret,
-      { expiresIn: type === 'reset' ? '1h' : '15s' }
+      { expiresIn: type === 'reset' ? '1h' : '10s' }
     );
   }
 
@@ -69,7 +75,7 @@ UserSchema.methods.generateJWT = function generateJWT(type: 'reset' | 'access' |
       _id: user._id,
     },
     process.env.JWT_ACCESS_SECRET!,
-    { expiresIn: '15s' }
+    { expiresIn: '10s' }
   );
   const refresh = jwt.sign(
     {
@@ -130,6 +136,17 @@ UserSchema.methods.deleteChangePasswordToken = function deleteChangePasswordToke
 UserSchema.methods.logout = function logout(refresh: string) {
   const user: IUser = this;
   user.authTokens = user.authTokens.filter(token => token.refresh !== refresh);
+};
+
+UserSchema.methods.addExercise = function addExercise(exercise: IExercise) {
+  const user: IUser = this;
+  user.exercises.push(exercise._id)
+};
+
+UserSchema.methods.deleteExercises = function deleteExercises(ids: Pick<IExercise, '_id'>[]): Pick<IExercise, '_id'>[] {
+  const user: IUser = this;
+  user.exercises = user.exercises.filter(_exercise => !ids.find(id => id.toString() === _exercise._id))
+  return user.exercises
 };
 
 const UserModel = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);

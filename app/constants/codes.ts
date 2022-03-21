@@ -73,6 +73,29 @@ export const errors = {
     }
   },
 
+  // Invalid form data
+  invalidFormData: {
+    code: 4001,
+    message: {
+      ru: 'Форма заполнена неверно',
+      eng: 'Invalid form data',
+    },
+  },
+  unableToSaveImage: {
+    code: 4002,
+    message: {
+      ru: 'Не удалось сохранить изображение',
+      eng: 'Unable to save an image',
+    },
+  },
+  unableToParseForm: {
+    code: 4002,
+    message: {
+      ru: 'Не удалось сохранить данные',
+      eng: 'Unable to save data',
+    },
+  },
+
   // Server errors
   unknownError: {
     code: 5000,
