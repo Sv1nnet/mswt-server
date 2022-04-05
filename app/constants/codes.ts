@@ -14,18 +14,18 @@ export const errors = {
       eng: 'Exercise not found',
     }
   },
-  trainingNotFound: {
+  workoutNotFound: {
     code: 4043,
     message: {
       ru: 'План тренировки не найден',
       eng: 'Training plan not found',
     }
   },
-  workoutNotFound: {
+  activityNotFound: {
     code: 4044,
     message: {
-      ru: 'Тренировка не найдена',
-      eng: 'Workout not found',
+      ru: 'Активность не найдена',
+      eng: 'Activity not found',
     }
   },
 

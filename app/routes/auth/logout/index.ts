@@ -20,6 +20,8 @@ const logout = async (req: LogoutRequest, res: Response) => {
     user = await user.save();
 
     res.statusCode = 200;
+    res.cookie('refresh_token', '', { secure: false, httpOnly: true, expires: new Date() })
+    res.cookie('access_token', '', { secure: false, httpOnly: true, expires: new Date() })
     res.json({ message: 'success' });
   } catch (error) {
     console.log(error);

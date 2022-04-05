@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { IUser, Token, Credentials } from './types';
 import { Exercise, IExercise } from '../Exercise/types';
+import { IWorkout } from '../Workout/types';
 
 const UserSchema = new Schema<IUser>({
   email: {
@@ -20,6 +21,16 @@ const UserSchema = new Schema<IUser>({
     minlength: 8,
   },
   exercises: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: false,
+    default: [],
+  },
+  workouts: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: false,
+    default: [],
+  },
+  activities: {
     type: [mongoose.Schema.Types.ObjectId],
     required: false,
     default: [],
@@ -66,7 +77,7 @@ UserSchema.methods.generateJWT = function generateJWT(type: 'reset' | 'access' |
         _id: user._id,
       },
       secret,
-      { expiresIn: type === 'reset' ? '1h' : '10s' }
+      { expiresIn: type === 'reset' ? '1h' : '15m' }
     );
   }
 
@@ -75,7 +86,7 @@ UserSchema.methods.generateJWT = function generateJWT(type: 'reset' | 'access' |
       _id: user._id,
     },
     process.env.JWT_ACCESS_SECRET!,
-    { expiresIn: '10s' }
+    { expiresIn: '15m' }
   );
   const refresh = jwt.sign(
     {
@@ -147,6 +158,17 @@ UserSchema.methods.deleteExercises = function deleteExercises(ids: Pick<IExercis
   const user: IUser = this;
   user.exercises = user.exercises.filter(_exercise => !ids.find(id => id.toString() === _exercise._id))
   return user.exercises
+};
+
+UserSchema.methods.addWorkout = function addWorkout(workout: IWorkout) {
+  const user: IUser = this;
+  user.workouts.push(workout._id)
+};
+
+UserSchema.methods.deleteWorkouts = function deleteWorkouts(ids: Pick<IWorkout, '_id'>[]): Pick<IWorkout, '_id'>[] {
+  const user: IUser = this;
+  user.workouts = user.workouts.filter(_workout => !ids.find(id => id.toString() === _workout._id))
+  return user.workouts
 };
 
 const UserModel = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
