@@ -8,6 +8,7 @@ import { Document } from 'mongoose';
 import { createRequestError, createResponseError } from 'utils/createResponseError';
 import { createResponse } from '@/app/utils/createResponse';
 import { pickExerciseList } from '@/app/utils/pickObjectFromMDBDoc';
+import Workout from '@/app/models/Workout';
 
 type User = {
   id: string;
@@ -24,8 +25,6 @@ const deleteExercise = async (req: IRequestWithUser, res: Response) => {
   const { id: exercise_id } = req.params
   let { ids } = req.body
 
-  console.log('deleteExercise', exercise_id, ids)
-
   try {
     let user: IUser = await User.findOne({ _id: id });
 
@@ -39,6 +38,15 @@ const deleteExercise = async (req: IRequestWithUser, res: Response) => {
     ids = [].concat(exercise_id || ids)
     const newExercises = user.deleteExercises(ids)
     user = await user.save()
+
+    const workouts = await Workout.find({ '_id': { $in: user.workouts }})
+
+    if (workouts.find((workout) => workout.exercises.find(exercise => ids.includes(exercise.id)))) {
+      throw createRequestError(
+        'Exercises can not be deleted',
+        createResponseError('unableToDeleteExercise_inWorkout', 400),
+      )
+    }
 
     const result = await new Promise<IExercise[]>((resolve, reject) => {
       Exercise.deleteMany({ _id: { $in: ids } }, (err) => {

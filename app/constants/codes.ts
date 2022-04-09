@@ -95,6 +95,13 @@ export const errors = {
       eng: 'Unable to save data',
     },
   },
+  unableToDeleteExercise_inWorkout: {
+    code: 4003,
+    message: {
+      ru: 'Не удалось удалить упражнение(я). Как минимум одно включено в тренировку(и).',
+      eng: 'Could not delete exercise(s). One or more of them included in some workout(s).',
+    }
+  },
 
   // Server errors
   unknownError: {
