@@ -7,6 +7,7 @@ import * as user from './user';
 import * as profile from './profile';
 import * as exercise from './exercises';
 import * as workout from './workouts';
+import * as activity from './activities';
 
 export default function setRoutes() {
   const router = Router();
@@ -41,6 +42,15 @@ export default function setRoutes() {
   router.get('/v1/workout/:id', withAccessVerify, workout.getWorkout)
   router.delete('/v1/workout/delete', withAccessVerify, workout.deleteWorkout)
   router.delete('/v1/workout/delete/:id', withAccessVerify, workout.deleteWorkout)
+  
+  // activity
+  router.post('/v1/activity/create', withAccessVerify, activity.createActivity)
+  router.patch('/v1/activity/update/:id', withAccessVerify, activity.updateActivity)
+  router.get('/v1/activity/list', withAccessVerify, activity.getActivityList)
+  router.get('/v1/activity/:id', withAccessVerify, activity.getActivity)
+  router.delete('/v1/activity/delete', withAccessVerify, activity.deleteActivity)
+  router.delete('/v1/activity/delete/:id', withAccessVerify, activity.deleteActivity)
+  router.get('/v1/activity/history/:workout_id', withAccessVerify, activity.getHistory)
 
   return router;
 }

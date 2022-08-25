@@ -102,6 +102,13 @@ export const errors = {
       eng: 'Could not delete exercise(s). One or more of them included in some workout(s).',
     }
   },
+  unableToDeleteActivity: {
+    code: 4004,
+    message: {
+      ru: 'Не удалось удалить активность(и).',
+      eng: 'Could not delete exercise(s).',
+    }
+  },
 
   // Server errors
   unknownError: {

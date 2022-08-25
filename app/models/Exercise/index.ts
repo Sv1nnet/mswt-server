@@ -49,7 +49,8 @@ const ExerciseSchema = new Schema<IExercise>({
     // two_sides_repeats - each hand, each leg, each breast side etc.
     // time_less - duration: less is better
     // time_more - duration: more is better
-    enum: [ 'repeats', 'time', 'duration', 'distance' ],
+    // TODO: replace time with time_repeats and time_distance
+    enum: [ 'repeats', 'time', 'time_distance', 'time_repeats', 'duration', 'distance', 'weight' ],
     required: true,
   },
   each_side: {

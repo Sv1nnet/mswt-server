@@ -6,7 +6,7 @@ import Workout from '@/app/models/Workout';
 import Exercise from '@/app/models/Exercise';
 
 // use after withAccess
-const getExerciseList = async (req, res) => {
+const getWorkoutList = async (req, res) => {
   const { id } = req.user;
 
   try {
@@ -56,4 +56,4 @@ const getExerciseList = async (req, res) => {
   }
 };
 
-export default getExerciseList;
+export default getWorkoutList;

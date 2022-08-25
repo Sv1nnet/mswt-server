@@ -1,4 +1,5 @@
 import { Document } from 'mongoose';
+import { IActivity } from '../Activity/types';
 import { Exercise, IExercise } from '../Exercise/types';
 import { IWorkout } from '../Workout/types';
 
@@ -54,6 +55,10 @@ export interface IUser extends Document {
 
   addWorkout(workout: IWorkout): void;
   deleteWorkouts(ids: Pick<Document, '_id'>[]): Pick<IWorkout, '_id'>[];
+
+  addActivity(activity: IActivity): void;
+  deleteActivities(ids: Pick<Document, '_id'>[]): Pick<IActivity, '_id'>[];
+  updateActivitiesOrderByIndex(activities: IActivity[]): IActivity[];
 
   logout(refresh: string): void;
 }

@@ -12,7 +12,7 @@ import { IWorkout } from '@/app/models/Workout/types';
 import Workout from '@/app/models/Workout';
 
 // use after withAccess
-const deleteExercise = async (req, res) => {
+const deleteWorkout = async (req, res) => {
   const { id } = req.user;
   const { id: workout_id } = req.params
   let { ids } = req.body
@@ -26,6 +26,13 @@ const deleteExercise = async (req, res) => {
       throw createRequestError(
         'User not found',
         createResponseError('userNotFound', 404),
+      )
+    }
+
+    if (workout_id && (await Workout.find({ _id: workout_id })).length === 0) {
+      throw createRequestError(
+        'Workout not found',
+        createResponseError('workoutNotFound', 404),
       )
     }
 
@@ -84,9 +91,9 @@ const deleteExercise = async (req, res) => {
     res.json(createResponse(preparedWorkouts));
   } catch (error) {
     console.log(error);
-    res.statusCode = error.code;
+    res.statusCode = error.code || 500;
     res.json(createResponse(null, { ...error, message: error.message || 'Something went wrong' }));
   }
 };
 
-export default deleteExercise;
+export default deleteWorkout;

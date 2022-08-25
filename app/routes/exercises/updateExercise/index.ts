@@ -88,6 +88,15 @@ const updateExercise = async (req: IRequestWithUser, res: Response) => {
 
       if (form.image) form.main.image = form.image
 
+      const getTargetAndUserDir = () => {
+        const userDir = path.join((global as typeof globalThis).appRoot, 'uploads', id)
+        const targetDir = path.join(userDir, exercise._id.toString())
+        return {
+          userDir,
+          targetDir,
+        }
+      }
+
       if (files.image) {
         const uuid = nanoid()
         const fileName = files.image ? `${uuid}_${files.image.originalFilename}` : ''
@@ -100,10 +109,9 @@ const updateExercise = async (req: IRequestWithUser, res: Response) => {
           uploaded_at: Date.now(),
         })
         exercise.updateExercise({ ...form.main as TypeExercise, image })
-        
+
         if (image_uid) {
-          const userDir = path.join((global as typeof globalThis).appRoot, 'uploads', id)
-          const targetDir = path.join(userDir, exercise._id.toString())
+          const { userDir, targetDir } = getTargetAndUserDir()
           let filesInDir = []
     
           if (!fs.existsSync(userDir)){
@@ -138,7 +146,11 @@ const updateExercise = async (req: IRequestWithUser, res: Response) => {
       } else {
         form.main.image 
           ? exercise.updateExercise({ ...form.main as TypeExercise, image: exercise.image })
-          : exercise.updateExercise({ ...form.main as TypeExercise })
+          : (() => {
+            console.log('targetDir', getTargetAndUserDir().targetDir)
+            exercise.updateExercise({ ...form.main as TypeExercise })
+            fs.rmSync(getTargetAndUserDir().targetDir, { recursive: true, force: true })
+          })()
       }
 
       exercise = await exercise.save()

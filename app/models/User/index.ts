@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { IUser, Token, Credentials } from './types';
 import { Exercise, IExercise } from '../Exercise/types';
 import { IWorkout } from '../Workout/types';
+import { IActivity } from '../Activity/types';
 
 const UserSchema = new Schema<IUser>({
   email: {
@@ -170,6 +171,23 @@ UserSchema.methods.deleteWorkouts = function deleteWorkouts(ids: Pick<IWorkout, 
   user.workouts = user.workouts.filter(_workout => !ids.find(id => id.toString() === _workout._id))
   return user.workouts
 };
+
+UserSchema.methods.addActivity = function addWorkout(activity: IActivity) {
+  const user: IUser = this;
+  user.activities.push(activity._id)
+};
+
+UserSchema.methods.deleteActivities = function deleteWorkouts(ids: Pick<IActivity, '_id'>[]): Pick<IWorkout, '_id'>[] {
+  const user: IUser = this;
+  user.activities = user.activities.filter(_activity => !ids.find(id => id.toString() === _activity._id))
+  return user.activities
+};
+
+UserSchema.methods.updateActivitiesOrderByIndex = function updateActivitiesOrderByIndex(activities: IActivity[]) {
+  const user = this;
+  user.activities = activities.sort((a ,b) => b.index - a.index).map(activity => activity._id)
+  return activities
+}
 
 const UserModel = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
 

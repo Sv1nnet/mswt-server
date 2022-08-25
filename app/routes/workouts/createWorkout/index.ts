@@ -19,7 +19,7 @@ interface RequestWithUser extends Request {
 }
 
 // use after withAccess
-const createExercise = async (req: RequestWithUser, res: Response) => {
+const createWorkout = async (req: RequestWithUser, res: Response) => {
   const { id } = req.user;
   const { body } = req
 console.log('body', body)
@@ -64,4 +64,4 @@ console.log('body', body)
   }
 };
 
-export default createExercise;
+export default createWorkout;
