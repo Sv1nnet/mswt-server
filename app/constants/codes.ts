@@ -109,6 +109,20 @@ export const errors = {
       eng: 'Could not delete exercise(s).',
     }
   },
+  unableToUpdateExercise: {
+    code: 4005,
+    message: {
+      ru: 'Не удалось обновить упражнение, т.к. оно включено минимум в одну трунировку.',
+      eng: 'Could not change exercise since it is included at least in one workout.'
+    }
+  },
+  unableToUpdateWorkout: {
+    code: 4005,
+    message: {
+      ru: 'Не удалось обновить тренировку, т.к. с ней есть минимум одна активность.',
+      eng: 'Could not change workout since there is at least one activity with it.'
+    }
+  },
 
   // Server errors
   unknownError: {

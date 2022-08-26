@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import _ from 'lodash';
 import formidable from 'formidable';
 import Workout from 'models/Workout';
+import Activity from 'models/Activity';
 import { Workout as TypeWorkout, IWorkout } from '@/app/models/Workout/types';
 import User from 'models/User';
 import { IUser } from 'models/User/types';
@@ -13,6 +14,7 @@ import formatFormData from '@/app/utils/formatFormData';
 import { nanoid } from 'nanoid';
 import fs from 'fs'
 import path from 'path'
+import { IActivity } from '@/app/models/Activity/types';
 
 type User = {
   id: string;
@@ -40,6 +42,15 @@ const updateWorkout = async (req: IRequestWithUser, res: Response) => {
         'User not found',
         createResponseError('userNotFound', 404),
       );
+    }
+
+    const activities: IActivity[] = await Activity.find({ '_id': { $in: user.activities }})
+
+    if (activities.find((activity) => activity.workout_id === workout_id)) {
+      throw createRequestError(
+        'Workout can not be changed',
+        createResponseError('unableToUpdateWorkout', 400),
+      )
     }
 
     let workout: IWorkout = await Workout.findOne({ _id: workout_id })

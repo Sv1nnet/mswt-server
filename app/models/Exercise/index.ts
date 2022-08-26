@@ -57,6 +57,10 @@ const ExerciseSchema = new Schema<IExercise>({
     type: Boolean,
     default: false,
   },
+  hours: {
+    type: Boolean,
+    default: false,
+  },
   repeats: {
     type: Number,
     required: false,

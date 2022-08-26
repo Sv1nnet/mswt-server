@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import _ from 'lodash';
 import formidable from 'formidable';
 import Exercise, { ImageModel } from 'models/Exercise';
+import Workout from 'models/Workout';
 import { Exercise as TypeExercise, IExercise } from '@/app/models/Exercise/types';
 import User from 'models/User';
 import { IUser } from 'models/User/types';
@@ -13,6 +14,7 @@ import formatFormData from '@/app/utils/formatFormData';
 import { nanoid } from 'nanoid';
 import fs from 'fs'
 import path from 'path'
+import { IWorkout } from '@/app/models/Workout/types';
 
 type User = {
   id: string;
@@ -46,6 +48,15 @@ const updateExercise = async (req: IRequestWithUser, res: Response) => {
       throw createRequestError(
         "The exercise doesn't exist",
         createResponseError('exerciseNotFound', 404),
+      )
+    }
+
+    const workouts: IWorkout[] = await Workout.find({ '_id': { $in: user.workouts }})
+
+    if (workouts.find((workout) => workout.exercises.find(exercise => exercise_id === exercise.id))) {
+      throw createRequestError(
+        'Exercises can not be changed',
+        createResponseError('unableToUpdateExercise', 400),
       )
     }
 
