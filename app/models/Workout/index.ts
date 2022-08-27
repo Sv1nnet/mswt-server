@@ -39,7 +39,11 @@ const WorkoutSchema = new Schema<IWorkout>({
   description: {
     type: String,
     required: false,
-  }
+  },
+  archived: {
+    type: Boolean,
+    dafault: false,
+  },
 });
 
 WorkoutSchema.methods.updateWorkout = function updateWorkout(data) {

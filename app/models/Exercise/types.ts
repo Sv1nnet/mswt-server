@@ -28,6 +28,7 @@ export interface IExercise extends Document {
   weight?: string;
   description?: string;
   image?: string;
+  archived?: boolean;
 
   updateExercise(data: Exercise): void;
   updateImage(data: Partial<IImage>): void;

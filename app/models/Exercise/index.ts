@@ -78,7 +78,11 @@ const ExerciseSchema = new Schema<IExercise>({
     type: String,
     enum: [ 'kg', 'lb' ],
     required: false,
-  }
+  },
+  archived: {
+    type: Boolean,
+    dafault: false,
+  },
 });
 
 ExerciseSchema.methods.updateExercise = function updateExercise(data) {

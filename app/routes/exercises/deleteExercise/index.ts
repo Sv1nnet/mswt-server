@@ -4,7 +4,6 @@ import Exercise from 'models/Exercise';
 import { IExercise } from 'models/Exercise/types';
 import User from 'models/User';
 import { IUser } from 'models/User/types';
-import { Document } from 'mongoose';
 import { createRequestError, createResponseError } from 'utils/createResponseError';
 import { createResponse } from '@/app/utils/createResponse';
 import { pickExerciseList } from '@/app/utils/pickObjectFromMDBDoc';

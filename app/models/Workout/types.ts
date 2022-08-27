@@ -18,6 +18,7 @@ export interface IWorkout extends Document {
   title: string;
   exercises: IWorkoutExercise[];
   description?: string;
+  archived?: boolean;
 
   updateWorkout(data: Workout): void;
 }
