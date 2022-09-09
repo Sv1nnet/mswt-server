@@ -47,6 +47,10 @@ const getWorkoutList = async (req, res) => {
         }))
     )
 
+    // setTimeout(() => {
+    //   res.statusCode = 200;
+    //   res.json(createResponse(preparedWorkouts));
+    // }, 5000)
     res.statusCode = 200;
     res.json(createResponse(preparedWorkouts));
   } catch (error) {

@@ -10,6 +10,7 @@ import { createResponse } from '@/app/utils/createResponse';
 import { pickExercise, pickExerciseList, pickImage, pickWorkout, pickWorkoutList } from '@/app/utils/pickObjectFromMDBDoc';
 import { IWorkout } from '@/app/models/Workout/types';
 import Workout from '@/app/models/Workout';
+import Activity from '@/app/models/Activity';
 
 // use after withAccess
 const deleteWorkout = async (req, res) => {
@@ -38,14 +39,15 @@ const deleteWorkout = async (req, res) => {
 
     const activities = await Activity.find({ '_id': { $in: user.activities }})
 
-    if (activities.find((activity) => activity.workout_id === workout_id)) {
+    ids = [].concat(workout_id || ids)
+
+    if (activities.find(activity => ids.includes(activity.workout_id))) {
       throw createRequestError(
         'Workout can not be delete',
         createResponseError('unableToDeleteWorkout', 400),
       )
     }
 
-    ids = [].concat(workout_id || ids)
     const newWorkouts = user.deleteWorkouts(ids)
     user = await user.save()
 

@@ -122,13 +122,13 @@ export const errors = {
       ru: 'Не удалось обновить тренировку, т.к. с ней есть минимум одна активность.',
       eng: 'Could not change workout since there is at least one activity with it.'
     },
-    unableToDeleteWorkout: {
-      code: 4006,
-      message: {
-        ru: 'Не удалось удалить тренировку, т.к. с ней есть минимум одна активность.',
-        eng: 'Could not delete workout since there is at least one activity with it.'
-      }
-    },
+  },
+  unableToDeleteWorkout: {
+    code: 4006,
+    message: {
+      ru: 'Не удалось удалить тренировку, т.к. с ней есть минимум одна активность.',
+      eng: 'Could not delete workout since there is at least one activity with it.'
+    }
   },
 
   // Server errors
