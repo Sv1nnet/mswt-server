@@ -55,6 +55,12 @@ const UserSchema = new Schema<IUser>({
     type: String,
     default: null,
   },
+  settings: {
+    type: Object,
+    default: {
+      lang: ['eng', 'ru'],
+    }
+  },
 });
 
 UserSchema.methods.isValidPassword = function isValidPassword(password: string): boolean {

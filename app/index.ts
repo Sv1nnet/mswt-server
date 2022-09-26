@@ -3,7 +3,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import setRoutes from './routes/setRoutes';
-import dbConnect from './utils/db/dbConnect';
+import dbConnect, { DBConnect } from './utils/db/dbConnect';
 import ip from 'utils/ips';
 import cors from 'cors';
 import path from 'path'
@@ -38,11 +38,28 @@ app.use((req, res, next) => {
 
 app.use(API, setRoutes());
 
-const PORT: number = +process.env.SERVER_PORT;
+const PORT = +process.env.SERVER_PORT;
 
 app.get('/', (req, res) => res.send('Express + TypeScript Server'));
 
-dbConnect().then(({ err, con }) => {
+const dbConnection = dbConnect()
+
+new Promise<DBConnect>((res) => {
+  let tries = 1
+  let timeout
+  const connect = async () => {
+    console.log('Trying to connect to DB. Try:', tries++)
+    const { value } = (await dbConnection.next())
+    if (value?.con) {
+      clearTimeout(timeout)
+      res(value)
+    } else {
+      console.warn('could not connect to DA', value?.err)
+      timeout = setTimeout(connect)
+    }
+  }
+  timeout = setTimeout(connect)
+}).then(({ con, err }) => {
   if (con) {
     app.listen(PORT, () => {
       console.log(`⚡️[server]: Server is running at http://${ip.firstIp}:${PORT}`);
