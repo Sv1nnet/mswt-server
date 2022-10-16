@@ -52,7 +52,7 @@ const getWorkoutList = async (req, res) => {
     //   res.json(createResponse(preparedWorkouts));
     // }, 5000)
     res.statusCode = 200;
-    res.json(createResponse(preparedWorkouts));
+    res.json(createResponse(preparedWorkouts.reverse()));
   } catch (error) {
     console.log(error);
     res.statusCode = error.code ?? 500;

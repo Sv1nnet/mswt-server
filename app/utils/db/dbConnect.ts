@@ -24,7 +24,7 @@ async function *dbConnect() {
   }
 }
 
-const dbConnect2 = async (): Promise<DBConnect> => {
+const __deprecatedDbConnect = async (): Promise<DBConnect> => {
   try {
     const con = await mongoose.connect(`mongodb://127.0.0.1:27017/${process.env.DB_NAME}`, {
       useNewUrlParser: true,

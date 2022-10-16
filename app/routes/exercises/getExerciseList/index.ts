@@ -41,7 +41,7 @@ const getExerciseList = async (req: IRequestWithUser, res: Response) => {
     // }
 
     res.statusCode = 200;
-    res.json(createResponse(pickExerciseList(exercises)));
+    res.json(createResponse(pickExerciseList(exercises.reverse())));
   } catch (error) {
     console.log(error);
     res.statusCode = error.code;

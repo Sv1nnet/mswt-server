@@ -16,6 +16,7 @@ export default function setRoutes() {
 
   // auth
   router.post('/v1/auth/login', auth.login);
+  router.post('/v1/auth/verify-signup-code', auth.verifySignupCode);
   router.post('/v1/auth/signup', auth.signup);
 
   router.post('/v1/auth/logout', withRefreshVerify, auth.logout);

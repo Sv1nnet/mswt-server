@@ -5,8 +5,11 @@ import dotenv from 'dotenv';
 import setRoutes from './routes/setRoutes';
 import dbConnect, { DBConnect } from './utils/db/dbConnect';
 import ip from 'utils/ips';
+import SignupCode from 'models/SignupCode';
+import { ISignupCode } from 'models/SignupCode/types';
 import cors from 'cors';
 import path from 'path'
+import { signupCodes } from './constants/signup_codes';
 
 (global as typeof globalThis).appRoot = path.resolve(__dirname)
 
@@ -52,9 +55,30 @@ new Promise<DBConnect>((res) => {
     const { value } = (await dbConnection.next())
     if (value?.con) {
       clearTimeout(timeout)
+      SignupCode
+        .find({})
+        .exec()
+        .then(async (res) => {
+          if (!res.length) {
+            console.error('No signup codes found. Trying to add ones')
+            try {
+              await SignupCode.insertMany(signupCodes.map(code => ({ code })))
+              console.log('Signup codes have been added')
+              return res
+            } catch (err) {
+              err.customMessage = 'Could not add signup codes'
+              throw err
+            }
+          }
+        })
+        .catch((err) => {
+          console.error('Error occured while trying to initialized signup codes')
+          console.error(err.message)
+          console.error(err.customMessage)
+        })
       res(value)
     } else {
-      console.warn('could not connect to DA', value?.err)
+      console.warn('could not connect to DB', value?.err)
       timeout = setTimeout(connect)
     }
   }

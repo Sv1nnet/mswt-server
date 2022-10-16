@@ -20,6 +20,7 @@ export type Decoded = {
 
 export type Credentials = {
   email?: string;
+  signup_code?: string;
   password?: string;
   nickName?: string;
   firstName?: string;
@@ -28,6 +29,7 @@ export type Credentials = {
 
 export interface IUser extends Document {
   email: string;
+  signup_code: string;
   password: string;
   nickName: string;
   firstName: string;

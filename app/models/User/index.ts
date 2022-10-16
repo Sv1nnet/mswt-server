@@ -16,6 +16,10 @@ const UserSchema = new Schema<IUser>({
     trim: true,
     unique: true,
   },
+  signup_code: {
+    type: String,
+    required: true,
+  },
   password: {
     type: String,
     required: true,

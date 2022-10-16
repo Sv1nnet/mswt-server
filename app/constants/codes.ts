@@ -28,6 +28,13 @@ export const errors = {
       eng: 'Activity not found',
     }
   },
+  signupCodeNotFound: {
+    code: 4045,
+    message: {
+      ru: 'Код не найден',
+      eng: 'Code not found'
+    }
+  },
 
   // Auth errors
   tokenExpired: { // access token expired
@@ -70,6 +77,15 @@ export const errors = {
     message: {
       ru: 'Пароль слишком короткий.',
       eng: 'Password is too short.',
+    }
+  },
+
+  // Access firbidden
+  signupCodeInUse: {
+    code: 4010,
+    message: {
+      ru: 'Код уже используется',
+      eng: 'Code already in use'
     }
   },
 

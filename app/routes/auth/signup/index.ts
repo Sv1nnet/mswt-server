@@ -24,7 +24,7 @@ const signup = async (req: Request<Credentials>, res: Response) => {
   } catch (error) {
     console.warn(error);
     if (error._message === 'User validation failed') {
-      const { email, password } = error.errors
+      const { email, password, signup_code } = error.errors
       if (email) {
         const { kind } = email
         if (kind === 'minlength') {
@@ -56,6 +56,18 @@ const signup = async (req: Request<Credentials>, res: Response) => {
         const errorToSend = createRequestError(
           'Password invalid',
           createResponseError('shortPassword', 403),
+        )
+        res.statusCode = errorToSend.code;
+        res.json(
+          createResponse(
+            null,
+            { ...errorToSend, message: errorToSend.message },
+          )
+        )
+      } else if (signup_code) {
+        const errorToSend = createRequestError(
+          'Invalid signup code',
+          createResponseError('signupCodeNotFound', 404),
         )
         res.statusCode = errorToSend.code;
         res.json(
