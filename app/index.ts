@@ -62,7 +62,7 @@ new Promise<DBConnect>((res) => {
           if (!res.length) {
             console.error('No signup codes found. Trying to add ones')
             try {
-              await SignupCode.insertMany(signupCodes.map(code => ({ code })))
+              await SignupCode.insertMany(signupCodes.map(code => ({ code, used: false })))
               console.log('Signup codes have been added')
               return res
             } catch (err) {

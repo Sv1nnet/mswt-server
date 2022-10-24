@@ -5,6 +5,7 @@ const PORT: number = +process.env.SERVER_PORT;
 export const getUrl = (params?: string): string => {
   const validParams = params && params[0] !== '/' ? `/${params}` : params;
   return `http://${ip.firstIp}:${PORT}/api${validParams}`;
+  // return `http://localhost:${PORT}/api${validParams}`;
 };
 
 export const url = {

@@ -15,7 +15,7 @@ const verifySignupCode = async (req: Request<ISignupCode>, res: Response) => {
     if (signupCode) {
       const user: IUser = await User.findOne({ signup_code: signupCode.code })
       if (user) {
-        throw createRequestError('Signup code already in use', createResponseError('signupCodeInUse', 401));
+        throw createRequestError('Invalid signup code', createResponseError('signupCodeNotFound', 404));
       }
       res.statusCode = 200;
       res.json(createResponse({ signup_code: signupCode.code}));

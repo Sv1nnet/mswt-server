@@ -43,13 +43,30 @@ const updateProfile = async (req: ProjectListRequest, res: Response) => {
       delete profile.password
     }
 
-    user.updateCredentials(profile)
-    user = await user.save()
+    try {
+      user.updateCredentials(profile)
+    } catch {
+      console.log('%c error while updating', "color: yellow'");
+      throw createRequestError(
+        'Update profile error',
+        createResponseError('signupCodeNotFound', 403, undefined, { signup_code: 'Code not found' }),
+      )
+    }
+
+    try {
+      user = await user.save()
+    } catch {
+      console.log('%c error while saving', "color: yellow'");
+      throw createRequestError(
+        'Update profile error',
+        createResponseError('signupCodeNotFound', 403, undefined, { signup_code: 'Code not found' }),
+      )
+    }
 
     res.statusCode = 200;
     res.json(createResponse(pickProfile(user)));
   } catch (error) {
-    console.log(error);
+    console.log('%c updating profile error ' + error.message, "color: yellow'");
     res.statusCode = error.code;
     res.json(createResponse(null, { ...error, message: error.message || 'Something went wrong' }));
   }

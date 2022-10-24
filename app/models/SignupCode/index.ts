@@ -5,6 +5,10 @@ const SignupCodeSchema = new Schema<ISignupCode>({
   code: {
     type: String,
     required: true,
+  },
+  used: {
+    type: Boolean,
+    default: false,
   }
 });
 
