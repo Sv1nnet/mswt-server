@@ -8,6 +8,7 @@ import * as profile from './profile';
 import * as exercise from './exercises';
 import * as workout from './workouts';
 import * as activity from './activities';
+import * as config from './config';
 
 export default function setRoutes() {
   const router = Router();
@@ -28,6 +29,8 @@ export default function setRoutes() {
   router.get('/v1/user', withAccessVerify, user.getUser);
   router.get('/v1/profile', withAccessVerify, profile.getProfile);
   router.patch('/v1/profile/update', withAccessVerify, profile.updateProfile);
+  router.patch('/v1/config/update', withAccessVerify, config.updateConfig)
+  router.get('/v1/config', withAccessVerify, config.getConfig)
 
   // exercise
   router.post('/v1/exercise/create', withAccessVerify, exercise.createExercise);

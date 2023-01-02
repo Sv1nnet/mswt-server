@@ -7,7 +7,7 @@ export const createResponseError = (type: keyof Errors, code: number, lang: 'ru'
   appCode: errors[type].code,
   message: {
     validation,
-    text: errors[type].message[lang] || errors[type].message.eng,
+    text: errors[type].message,
   }
 })
 

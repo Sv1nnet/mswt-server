@@ -2,11 +2,9 @@ import { Request, Response } from 'express';
 import _ from 'lodash';
 import User from 'models/User';
 import { IUser } from 'models/User/types';
-import { pickProfile } from 'utils/pickObjectFromMDBDoc';
+import { pickConfig } from 'utils/pickObjectFromMDBDoc';
 import { createRequestError, createResponseError } from 'utils/createResponseError';
 import { createResponse } from '@/app/utils/createResponse';
-import SignupCode from '@/app/models/SignupCode';
-import { ISignupCode } from '@/app/models/SignupCode/types';
 
 type User = {
   id: string;
@@ -18,9 +16,9 @@ interface ProjectListRequest extends Request {
 }
 
 // use after withAccess
-const updateProfile = async (req: ProjectListRequest, res: Response) => {
+const updateConfig = async (req: ProjectListRequest, res: Response) => {
   const { id } = req.user;
-  let { body: profile } = req
+  let { body: config } = req
 
   try {
     let user: IUser = await User.findOne({ _id: id });
@@ -31,33 +29,8 @@ const updateProfile = async (req: ProjectListRequest, res: Response) => {
       );
     }
 
-    if (!user.isValidPassword(profile.password)) {
-      throw createRequestError(
-        'Wrong password',
-        createResponseError('passwordWrong', 403, undefined, { password: 'Wrong password' }),
-      )
-    }
-
-    profile = { ...profile }
-    if (profile.signup_code) {
-      let signupCode: ISignupCode = (await SignupCode.findOne({ code: profile.signup_code }));
-      if (!signupCode || signupCode.used) {
-        throw createRequestError(
-          'Update profile error',
-          createResponseError('signupCodeNotFound', 403, undefined, { signup_code: 'Code not found' }),
-        )
-      }
-    }
-    
-    if (profile.new_password) {
-      profile.password = user.hashPassword(profile.new_password)
-      delete profile.new_password
-    } else {
-      delete profile.password
-    }
-
     try {
-      user.updateCredentials(profile)
+      user.updateCredentials({ settings: config })
     } catch {
       console.log('%c error while updating', "color: yellow'");
       throw createRequestError(
@@ -77,7 +50,7 @@ const updateProfile = async (req: ProjectListRequest, res: Response) => {
     }
 
     res.statusCode = 200;
-    res.json(createResponse(pickProfile(user)));
+    res.json(createResponse(pickConfig(user).settings));
   } catch (error) {
     console.log('%c updating profile error ' + error.message, "color: yellow'");
     res.statusCode = error.code;
@@ -85,4 +58,4 @@ const updateProfile = async (req: ProjectListRequest, res: Response) => {
   }
 };
 
-export default updateProfile;
+export default updateConfig;

@@ -9,7 +9,11 @@ const SignupCodeSchema = new Schema<ISignupCode>({
   used: {
     type: Boolean,
     default: false,
-  }
+  },
+  issued: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const SignupCodeModel = mongoose.models.SignupCode || mongoose.model<ISignupCode>('SignupCode', SignupCodeSchema);

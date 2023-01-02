@@ -25,6 +25,7 @@ export type Credentials = {
   nickName?: string;
   firstName?: string;
   lastName?: string;
+  settings?: { lang: 'eng' | 'ru' };
 };
 
 export interface IUser extends Document {
@@ -38,6 +39,7 @@ export interface IUser extends Document {
   workouts: Pick<Document, '_id'>[],
   activities: Pick<Document, '_id'>[],
   authTokens: Token[];
+  settings: { lang: 'eng' | 'ru' };
   changePasswordToken?: string | null;
 
   isValidPassword(password: string): boolean;

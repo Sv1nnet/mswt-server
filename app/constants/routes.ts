@@ -1,11 +1,12 @@
 import ip from 'utils/ips';
 
-const PORT: number = +process.env.SERVER_PORT;
+const PORT: number = +process.env.SERVER_PORT ?? 3001;
+export const protocol: string = process.env.NODE_ENV === 'production' ? 'https': 'http'
+export const serverIp = process.env.SERVER_IP || ip.firstIp
 
-export const getUrl = (params?: string): string => {
+export const getUrl = (params: string = ''): string => {
   const validParams = params && params[0] !== '/' ? `/${params}` : params;
-  return `http://${ip.firstIp}:${PORT}/api${validParams}`;
-  // return `http://localhost:${PORT}/api${validParams}`;
+  return `${protocol}://${serverIp}:${PORT}/api${validParams}`;
 };
 
 export const url = {

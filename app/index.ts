@@ -10,6 +10,7 @@ import { ISignupCode } from 'models/SignupCode/types';
 import cors from 'cors';
 import path from 'path'
 import { signupCodes } from './constants/signup_codes';
+import { url } from './constants/routes';
 
 (global as typeof globalThis).appRoot = path.resolve(__dirname)
 
@@ -86,7 +87,7 @@ new Promise<DBConnect>((res) => {
 }).then(({ con, err }) => {
   if (con) {
     app.listen(PORT, () => {
-      console.log(`⚡️[server]: Server is running at http://${ip.firstIp}:${PORT}`);
+      console.log(`⚡️[server]: Server is running at ${url.base()}`);
     });
   }
 

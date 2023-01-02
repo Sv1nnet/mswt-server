@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 import _ from 'lodash';
 import User from 'models/User';
 import { IUser } from 'models/User/types';
-import { pickProfile } from 'utils/pickObjectFromMDBDoc';
+import { pickConfig } from 'utils/pickObjectFromMDBDoc';
 
 type User = {
   id: string;
@@ -28,7 +28,7 @@ const getProfile = async (req: ProjectListRequest, res: Response) => {
       ) 
     }
     res.statusCode = 200;
-    res.json(createResponse(pickProfile(user)));
+    res.json(createResponse(pickConfig(user).settings));
   } catch (error) {
     console.log(error);
     res.statusCode = error.code;

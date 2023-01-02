@@ -4,8 +4,10 @@
   "description": "Auth server",
   "main": "index.js",
   "scripts": {
-    "serve": "nodemon ./app/index.ts",
-    "serve:debug": "nodemon --config nodemon.json --inspect ./app/index.ts",
+    "serve:prod": "NODE_ENV=production nodemon ./app/index.ts",
+    "serve:dev": "NODE_ENV=development nodemon ./app/index.ts",
+    "serve:docker": "NODE_ENV=doc-development nodemon ./app/index.ts",
+    "serve:debug": "NODE_ENV=development nodemon --config nodemon.json --inspect ./app/index.ts",
     "test": "test"
   },
   "keywords": [

@@ -7,7 +7,7 @@ import { createRequestError, createResponseError } from 'utils/createResponseErr
 const DAYS_30 = 30 * 24 * 60 * 60 * 1000
 
 const login = async (req: Request<Credentials>, res: Response) => {
-  const { password, email } = req.body;
+  const { password, email, settings } = req.body;
   console.log('req.body', req.body)
   try {
     let user: IUser = await User.findOne({ email });
@@ -15,6 +15,7 @@ const login = async (req: Request<Credentials>, res: Response) => {
     if (!user.isValidPassword(password!)) throw createRequestError('Wrong password', createResponseError('passwordWrong', 403));
 
     const tokens = user.generateJWT('pair') as Token;
+    user.updateCredentials({ settings })
     user.addToken(tokens);
     user = await user.save();
 

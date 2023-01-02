@@ -63,7 +63,7 @@ const UserSchema = new Schema<IUser>({
   settings: {
     type: Object,
     default: {
-      lang: ['eng', 'ru'],
+      lang: 'eng',
     }
   },
 });

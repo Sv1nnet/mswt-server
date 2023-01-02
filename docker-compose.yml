@@ -1,0 +1,30 @@
+version: "3"
+services:
+  mswt-client:
+    image: mswt-client
+    ports:
+      - "3004:3004"
+    depends_on:
+      - mswt-server
+  mswt-server:
+    image: mswt-server
+    ports:
+      - "3005:3005"
+    networks:
+      - mswt
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    networks:
+      - mswt
+    volumes:
+      - mongo-data:/data/db
+networks:
+  mswt:
+    driver: bridge
+volumes:
+  mongo-data:
+    driver: local
