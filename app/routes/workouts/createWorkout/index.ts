@@ -7,6 +7,7 @@ import { createResponse } from '@/app/utils/createResponse';
 import { pickWorkout } from '@/app/utils/pickObjectFromMDBDoc';
 import { Types } from 'mongoose';
 import Workout from '@/app/models/Workout';
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 
 type User = {
   id: string;
@@ -25,13 +26,7 @@ const createWorkout = async (req: RequestWithUser, res: Response) => {
 console.log('body', body)
 
   try {
-    let user = await User.findOne({ _id: id })
-    if (!user) {
-      throw createRequestError(
-        'User not found',
-        createResponseError('userNotFound', 404),
-      )
-    }
+    let user = await getUserOrThrow(id)
 
     const exercises = await Exercise.find({
       _id: {

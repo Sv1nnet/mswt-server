@@ -15,6 +15,7 @@ import { nanoid } from 'nanoid';
 import fs from 'fs'
 import path from 'path'
 import { IActivity } from '@/app/models/Activity/types';
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 
 type User = {
   id: string;
@@ -36,13 +37,7 @@ const updateWorkout = async (req: IRequestWithUser, res: Response) => {
   const { body } = req
 
   try {
-    let user: IUser = await User.findOne({ _id: id });
-    if (!user) {
-      throw createRequestError(
-        'User not found',
-        createResponseError('userNotFound', 404),
-      );
-    }
+    let user = await getUserOrThrow(id)
 
     const activities: IActivity[] = await Activity.find({ '_id': { $in: user.activities }})
 

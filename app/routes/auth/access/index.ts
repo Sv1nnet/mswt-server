@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import _ from 'lodash';
 import User from '../../../models/User';
 import { IUser, Token } from 'models/User/types';
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 
 type User = {
   id: string;
@@ -16,8 +17,7 @@ interface RefreshRequest extends Request {
 const access = async (req: RefreshRequest, res: Response) => {
   const { refresh, id } = req.user;
   try {
-    let user: IUser = await User.findOne({ _id: id });
-    if (!user) throw new Error("Can't find the user");
+    let user = await getUserOrThrow(id)
 
     const token = user.updateToken('access', refresh) as Token;
     await user.save();

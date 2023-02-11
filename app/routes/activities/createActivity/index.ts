@@ -14,6 +14,7 @@ import path from 'path'
 import formatFormData from '@/app/utils/formatFormData';
 import { nanoid } from 'nanoid'
 import { Types } from 'mongoose';
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 
 type User = {
   id: string;
@@ -32,13 +33,7 @@ const createActivity = async (req: RequestWithUser, res: Response) => {
 // console.log('body', body)
 
   try {
-    let user = await User.findOne({ _id: id })
-    if (!user) {
-      throw createRequestError(
-        'User not found',
-        createResponseError('userNotFound', 404),
-      )
-    }
+    let user = await getUserOrThrow(id)
 
     const workout = await Workout.findById(body.workout_id)
 

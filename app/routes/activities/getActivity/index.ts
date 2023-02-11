@@ -8,6 +8,7 @@ import { Document } from 'mongoose';
 import { createRequestError, createResponseError } from 'utils/createResponseError';
 import { createResponse } from '@/app/utils/createResponse';
 import { pickActivity } from '@/app/utils/pickObjectFromMDBDoc';
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 
 type User = {
   id: string;
@@ -24,14 +25,7 @@ const getActivity = async (req: IRequestWithUser, res: Response) => {
   const { id: activity_id } = req.params
 
   try {
-    const user: IUser = await User.findOne({ _id: id });
-
-    if (!user) {
-      throw createRequestError(
-        "Uesr not found",
-        createResponseError('userNotFound', 404),
-      )
-    }
+    let user = await getUserOrThrow(id)
 
     if (!user.activities.includes(activity_id as unknown as Pick<Document, '_id'>)) {
       throw createRequestError(

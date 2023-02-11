@@ -5,6 +5,7 @@ import { IUser } from 'models/User/types';
 import { pickConfig } from 'utils/pickObjectFromMDBDoc';
 import { createRequestError, createResponseError } from 'utils/createResponseError';
 import { createResponse } from '@/app/utils/createResponse';
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 
 type User = {
   id: string;
@@ -21,13 +22,7 @@ const updateConfig = async (req: ProjectListRequest, res: Response) => {
   let { body: config } = req
 
   try {
-    let user: IUser = await User.findOne({ _id: id });
-    if (!user) {
-      throw createRequestError(
-        'User not found',
-        createResponseError('userNotFound', 404),
-      );
-    }
+    let user = await getUserOrThrow(id)
 
     try {
       user.updateCredentials({ settings: config })

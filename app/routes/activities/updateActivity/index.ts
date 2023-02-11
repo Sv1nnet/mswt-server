@@ -13,6 +13,7 @@ import formatFormData from '@/app/utils/formatFormData';
 import { nanoid } from 'nanoid';
 import fs from 'fs'
 import path from 'path'
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 
 type User = {
   id: string;
@@ -34,13 +35,7 @@ const updateActivity = async (req: IRequestWithUser, res: Response) => {
   const { body } = req
 
   try {
-    let user: IUser = await User.findOne({ _id: id });
-    if (!user) {
-      throw createRequestError(
-        'User not found',
-        createResponseError('userNotFound', 404),
-      );
-    }
+    let user = await getUserOrThrow(id)
 
     let activity: IActivity = await Activity.findOne({ _id: activity_id })
     if (!activity) {

@@ -15,6 +15,7 @@ import { nanoid } from 'nanoid';
 import fs from 'fs'
 import path from 'path'
 import { IWorkout } from '@/app/models/Workout/types';
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 
 type User = {
   id: string;
@@ -35,7 +36,7 @@ const updateExercise = async (req: IRequestWithUser, res: Response) => {
   const { id: exercise_id } = req.params
 
   try {
-    const user: IUser = await User.findOne({ _id: id });
+    let user = await getUserOrThrow(id)
     if (!user.exercises.includes(exercise_id as unknown as Pick<Document, '_id'>)) {
       throw createRequestError(
         "The exercise doesn't exist",

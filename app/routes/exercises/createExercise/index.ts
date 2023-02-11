@@ -11,6 +11,7 @@ import fs from 'fs'
 import path from 'path'
 import formatFormData from '@/app/utils/formatFormData';
 import { nanoid } from 'nanoid'
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 
 type User = {
   id: string;
@@ -41,13 +42,7 @@ const createExercise = async (req: RequestWithUser, res: Response) => {
         )
       }
       
-      let user: IUser = await User.findOne({ _id: id });
-      if (!user) {
-        throw createRequestError(
-          'User not found',
-          createResponseError('userNotFound', 404),
-        )
-      }
+      let user = await getUserOrThrow(id)
 
       const { image_uid, ...form } = formatFormData<Form, Form>(fields, { each_side: 'bool', weight: 'number', time: 'number', description: 'string' })
 

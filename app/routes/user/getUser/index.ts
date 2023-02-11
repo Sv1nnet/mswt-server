@@ -1,3 +1,5 @@
+import { createRequestError, createResponseError } from '@/app/utils/createResponseError';
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 import { Request, Response } from 'express';
 import _ from 'lodash';
 import User from 'models/User';
@@ -18,8 +20,8 @@ const getUser = async (req: ProjectListRequest, res: Response) => {
   const { id } = req.user;
 
   try {
-    const user: IUser = await User.findOne({ _id: id });
-    if (!user) throw new Error("The user doesn't exist");
+    let user = await getUserOrThrow(id)
+
     res.statusCode = 200;
     res.json(pickUser(user));
   } catch (error) {

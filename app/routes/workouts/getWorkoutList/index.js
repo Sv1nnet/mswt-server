@@ -4,14 +4,16 @@ import { createResponse } from '@/app/utils/createResponse';
 import { pickExercise, pickImage, pickWorkout } from '@/app/utils/pickObjectFromMDBDoc';
 import Workout from '@/app/models/Workout';
 import Exercise from '@/app/models/Exercise';
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 
 // use after withAccess
 const getWorkoutList = async (req, res) => {
   const { id } = req.user;
 
   try {
-    const user = await User.findOne({ _id: id });
-    const workouts = (await Workout.find({ '_id': { $in: user.workouts } })).map((workout) => {
+    const user = await getUserOrThrow(id)
+
+    const workouts = (await Workout.find({ '_id': { $in: user.workouts }, archived: { $ne: true } })).map((workout) => {
       const _workout = pickWorkout(workout._doc)
       _workout.id = _workout.id.toString()
       return _workout

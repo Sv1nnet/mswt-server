@@ -1,16 +1,13 @@
-FROM node:14-slim
+FROM node:14-alpine
 
-WORKDIR /usr/server
+WORKDIR /app
 
-COPY ./package.json ./
-COPY ./package-lock.json ./
+COPY package*.json ./
 
-RUN npm i
+RUN npm install
 
 COPY . .
 
-EXPOSE 3005:3005
-
-ENV NODE_ENV=production
+EXPOSE 3005
 
 CMD ["npm", "run", "serve:prod"]

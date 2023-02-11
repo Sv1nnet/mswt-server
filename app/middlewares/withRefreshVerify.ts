@@ -3,6 +3,8 @@ import { IncomingHttpHeaders } from 'http';
 import jwt, { Secret } from 'jsonwebtoken';
 import User from 'models/User';
 import { Decoded, Token, Refresh } from 'models/User/types';
+import { createRequestError, createResponseError } from '../utils/createResponseError';
+import { createResponse } from '../utils/createResponse';
 
 export type User = {
   id: string;
@@ -30,22 +32,37 @@ const withRefreshVerify = (req: IReqWithRefreshToken, res: Response, next: NextF
 
   console.log('before refresh validation. Token:', refresh)
   jwt.verify(refresh, secret, async (err, decoded: Decoded) => {
-    if (!err) {
-      const user =  await User.findById(decoded._id)
-      if (user.authTokens.find(token => token.refresh === refresh)) {
-        req.user = {
-          refresh,
-          id: decoded._id,
-        };
-        return next();
+    try {
+      if (!err) {
+        const user =  await User.findById(decoded._id)
+        if (!user) {
+          throw createRequestError(
+            'User not found',
+            createResponseError('userNotFound', 404),
+          )
+        }
+        if (user.authTokens.find(token => token.refresh === refresh)) {
+          req.user = {
+            refresh,
+            id: decoded._id,
+          };
+          return next();
+        }
       }
+  
+      console.log('Error while token validation', err ? err.message : err);
+      res.statusCode = 403;
+      res.cookie('refresh_token', '', { secure: false, httpOnly: true, expires: new Date() })
+      res.cookie('access_token', '', { secure: false, httpOnly: true, expires: new Date() })
+      res.json({ message: err ? err.message : 'Token is invalid' });
+    } catch (error) {
+      if (error?.name === 'ValidationError') {
+        error = createRequestError('Invalid form data', createResponseError('invalidFormData', 400))
+      }
+  
+      res.statusCode = error.code ?? 500;
+      res.json(createResponse(null, { ...error, message: error?.message || 'Something went wrong' }));
     }
-
-    console.log('Error while token validation', err ? err.message : err);
-    res.statusCode = 403;
-    res.cookie('refresh_token', '', { secure: false, httpOnly: true, expires: new Date() })
-    res.cookie('access_token', '', { secure: false, httpOnly: true, expires: new Date() })
-    res.json({ message: err ? err.message : 'Token is invalid' });
   });
 };
 

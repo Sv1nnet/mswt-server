@@ -11,6 +11,8 @@ import { pickExercise, pickExerciseList, pickImage, pickWorkout, pickWorkoutList
 import { IWorkout } from '@/app/models/Workout/types';
 import Workout from '@/app/models/Workout';
 import Activity from '@/app/models/Activity';
+import waitFor from '@/app/utils/waitFor';
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 
 // use after withAccess
 const deleteWorkout = async (req, res) => {
@@ -21,14 +23,7 @@ const deleteWorkout = async (req, res) => {
   console.log('delete workout', workout_id, ids)
 
   try {
-    let user = await User.findOne({ _id: id });
-
-    if (!user) {
-      throw createRequestError(
-        'User not found',
-        createResponseError('userNotFound', 404),
-      )
-    }
+    let user = await getUserOrThrow(id)
 
     if (workout_id && (await Workout.find({ _id: workout_id })).length === 0) {
       throw createRequestError(
@@ -37,32 +32,11 @@ const deleteWorkout = async (req, res) => {
       )
     }
 
-    const activities = await Activity.find({ '_id': { $in: user.activities }})
-
     ids = [].concat(workout_id || ids)
 
-    if (activities.find(activity => ids.includes(activity.workout_id))) {
-      throw createRequestError(
-        'Workout can not be delete',
-        createResponseError('unableToDeleteWorkout', 400),
-      )
-    }
+    await Workout.updateMany({ _id: { $in: ids } }, { $set: { archived: true } }, {multi: true })
 
-    const newWorkouts = user.deleteWorkouts(ids)
-    user = await user.save()
-
-    await new Promise((resolve, reject) => {
-      Workout.deleteMany({ _id: { $in: ids } }, (err) => {
-        if (!err) {
-          Workout.find({ _id: { $in: newWorkouts }}, (err, docs) => {
-            if (!err) resolve(docs)
-            else reject(err)
-          })
-        } else reject(err)
-      })
-    })
-
-    const workouts = (await Workout.find({ '_id': { $in: user.workouts } })).map((workout) => {
+    const workouts = (await Workout.find({ '_id': { $in: user.workouts }, archived: { $ne: true } })).map((workout) => {
       const _workout = pickWorkout(workout._doc)
       _workout.id = _workout.id.toString()
       return _workout

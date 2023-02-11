@@ -10,6 +10,7 @@ import { createResponse } from '@/app/utils/createResponse';
 import { pickExercise, pickWorkout } from '@/app/utils/pickObjectFromMDBDoc';
 import Workout from '@/app/models/Workout';
 import { IWorkout } from '@/app/models/Workout/types';
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 
 type User = {
   id: string;
@@ -26,7 +27,8 @@ const getWorkout = async (req: IRequestWithUser, res: Response) => {
   const { id: workout_id } = req.params
 
   try {
-    const user: IUser = await User.findOne({ _id: id });
+    let user = await getUserOrThrow(id)
+
     if (!user.workouts.includes(workout_id as unknown as Pick<Document, '_id'>)) {
       throw createRequestError(
         "The workout doesn't exist",

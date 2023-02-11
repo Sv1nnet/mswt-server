@@ -8,6 +8,7 @@ import { Document } from 'mongoose';
 import { createRequestError, createResponseError } from 'utils/createResponseError';
 import { createResponse } from '@/app/utils/createResponse';
 import { pickExercise } from '@/app/utils/pickObjectFromMDBDoc';
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 
 type User = {
   id: string;
@@ -24,7 +25,7 @@ const getExercise = async (req: IRequestWithUser, res: Response) => {
   const { id: exercise_id } = req.params
 
   try {
-    const user: IUser = await User.findOne({ _id: id });
+    let user = await getUserOrThrow(id)
     if (!user.exercises.includes(exercise_id as unknown as Pick<Document, '_id'>)) {
       throw createRequestError(
         "The exercise doesn't exist",

@@ -7,6 +7,7 @@ import { createRequestError, createResponseError } from 'utils/createResponseErr
 import { createResponse } from '@/app/utils/createResponse';
 import SignupCode from '@/app/models/SignupCode';
 import { ISignupCode } from '@/app/models/SignupCode/types';
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 
 type User = {
   id: string;
@@ -23,13 +24,7 @@ const updateProfile = async (req: ProjectListRequest, res: Response) => {
   let { body: profile } = req
 
   try {
-    let user: IUser = await User.findOne({ _id: id });
-    if (!user) {
-      throw createRequestError(
-        'User not found',
-        createResponseError('userNotFound', 404),
-      );
-    }
+    let user = await getUserOrThrow(id)
 
     if (!user.isValidPassword(profile.password)) {
       throw createRequestError(

@@ -6,25 +6,24 @@ import { Types } from 'mongoose';
 import { createRequestError, createResponseError } from 'utils/createResponseError';
 import { createResponse } from '@/app/utils/createResponse';
 import { pickActivityList } from '@/app/utils/pickObjectFromMDBDoc';
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 
 // use after withAccess
 const getActivityList = async (req, res) => {
   const { id } = req.user;
-  const { page = 1, byPage = 30 } = req.params
+  console.log("req.params", req.query)
+  let { page = 1, byPage = 30 } = req.query
 
   try {
-    const user = await User.findOne({ _id: id });
-    if (!user) {
-      throw createRequestError(
-        "Uesr not found",
-        createResponseError('userNotFound', 404),
-      )
-    }
+    let user = await getUserOrThrow(id)
 
-    const startIndex = (page - 1) * byPage
+    page = +page
+    byPage = +byPage
+    const startIndex = ((page - 1) * byPage)
     const endIndex = startIndex + (byPage + 1)
 
     let activities = await Activity.find({ '_id': { $in: user.activities.slice(startIndex, endIndex) } }).limit(31)
+    console.log(`user.activities.slice(${startIndex}, ${endIndex})`, user.activities.slice(startIndex, endIndex))
     const workoutsInActivities = await Workout.find({ '_id': { $in: activities.map(activity => Types.ObjectId(activity.workout_id)) }})
     activities = activities.sort((a, b) => b._doc.index - a._doc.index).map(activity => ({ ...activity._doc, workout_title: workoutsInActivities.find(workout => workout._id.toString() === activity.workout_id).title }))
 

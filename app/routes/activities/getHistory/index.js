@@ -3,6 +3,7 @@ import Workout from 'models/Workout';
 import User from 'models/User';
 import { createRequestError, createResponseError } from 'utils/createResponseError';
 import { createResponse } from '@/app/utils/createResponse';
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 
 // use after withAccess
 const getHistory = async (req, res) => {
@@ -12,13 +13,7 @@ const getHistory = async (req, res) => {
   let { offset } = req.query
 
   try {
-    const user = await User.findOne({ _id: id });
-    if (!user) {
-      throw createRequestError(
-        "User not found",
-        createResponseError('userNotFound', 404),
-      )
-    }
+    const user = await getUserOrThrow(id)
 
     let activities = (await Activity.find({ 'workout_id': { $in: workout_id } }))
     const total = activities.length

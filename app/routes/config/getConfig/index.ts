@@ -1,5 +1,6 @@
 import { createResponse } from '@/app/utils/createResponse';
 import { createRequestError, createResponseError } from '@/app/utils/createResponseError';
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 import { Request, Response } from 'express';
 import _ from 'lodash';
 import User from 'models/User';
@@ -20,13 +21,7 @@ const getProfile = async (req: ProjectListRequest, res: Response) => {
   const { id } = req.user;
 
   try {
-    const user: IUser = await User.findOne({ _id: id });
-    if (!user) {
-      throw createRequestError(
-        "Uesr not found",
-        createResponseError('userNotFound', 404),
-      ) 
-    }
+    let user = await getUserOrThrow(id)
     res.statusCode = 200;
     res.json(createResponse(pickConfig(user).settings));
   } catch (error) {

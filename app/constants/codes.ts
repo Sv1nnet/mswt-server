@@ -128,7 +128,7 @@ export const errors = {
   unableToUpdateExercise: {
     code: 4005,
     message: {
-      ru: 'Не удалось обновить упражнение, т.к. оно включено минимум в одну трунировку.',
+      ru: 'Не удалось обновить упражнение, т.к. оно включено минимум в одну тренировку.',
       eng: 'Could not change exercise since it is included at least in one workout.'
     }
   },

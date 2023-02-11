@@ -7,6 +7,7 @@ import { IUser } from 'models/User/types';
 import { createRequestError, createResponseError } from 'utils/createResponseError';
 import { createResponse } from '@/app/utils/createResponse';
 import { pickActivityList } from '@/app/utils/pickObjectFromMDBDoc';
+import getUserOrThrow from '@/app/utils/getUserOrThrow';
 
 type User = {
   id: string;
@@ -24,14 +25,7 @@ const deleteActivity = async (req: IRequestWithUser, res: Response) => {
   let { ids } = req.body
 
   try {
-    let user: IUser = await User.findOne({ _id: id });
-
-    if (!user) {
-      throw createRequestError(
-        'User not found',
-        createResponseError('userNotFound', 404),
-      )
-    }
+    let user = await getUserOrThrow(id)
 
     ids = [].concat(activity_id || ids)
     const newActivities = user.deleteActivities(ids)
