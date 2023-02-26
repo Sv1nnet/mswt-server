@@ -30,7 +30,6 @@ interface RequestWithUser extends Request {
 const createActivity = async (req: RequestWithUser, res: Response) => {
   const { id } = req.user;
   const { body } = req
-// console.log('body', body)
 
   try {
     let user = await getUserOrThrow(id)

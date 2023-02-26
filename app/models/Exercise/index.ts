@@ -65,7 +65,14 @@ const ExerciseSchema = new Schema<IExercise>({
     type: Number,
     required: false,
   },
-  // seconds
+  is_in_workout: {
+    type: Boolean,
+    default: false,
+  },
+  in_workouts: {
+    type: [mongoose.Schema.Types.ObjectId],
+    default: [],
+  },
   time: {
     type: Number,
     required: false,
@@ -89,6 +96,14 @@ ExerciseSchema.methods.updateExercise = function updateExercise(data) {
   const exercise = this;
   Object.assign(exercise, data);
   if (!data.image) exercise.image = undefined
+}
+
+ExerciseSchema.methods.removeFromWorkout = function removeFromWorkout(workoutId) {
+  const exercise = this;
+  exercise.in_workouts = exercise.in_workouts.filter(_workoutId => _workoutId.toString() !== workoutId.toString())
+  if (exercise.in_workouts.length === 0) {
+    exercise.is_in_workout = false
+  }
 }
 
 ExerciseSchema.methods.updateImage = async function updateImage(data) {

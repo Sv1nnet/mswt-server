@@ -30,7 +30,6 @@ const withRefreshVerify = (req: IReqWithRefreshToken, res: Response, next: NextF
 
   const secret = process.env.JWT_REFRESH_SECRET as Secret;
 
-  console.log('before refresh validation. Token:', refresh)
   jwt.verify(refresh, secret, async (err, decoded: Decoded) => {
     try {
       if (!err) {

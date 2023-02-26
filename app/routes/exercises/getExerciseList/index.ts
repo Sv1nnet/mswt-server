@@ -22,14 +22,39 @@ interface IRequestWithUser extends Request {
 // use after withAccess
 const getExerciseList = async (req: IRequestWithUser, res: Response) => {
   const { id } = req.user;
+  const { query } = req
+  const { workoutId, lang } = query
+
+  let archived = false
+  if (query.archived === "true") {
+    archived = true
+  }
 
   try {
     let user = await getUserOrThrow(id)
 
-    const exercises = await Exercise.find({ '_id': { $in: user.exercises }, archived: { $ne: true } })
+    let exercises: IExercise[] = archived
+      ? await Exercise.find({ '_id': { $in: user.exercises } })
+      : await Exercise.find({ '_id': { $in: user.exercises }, archived: { $ne: true } })
+
+    if (archived && workoutId) exercises = exercises.filter((exercise) => {
+      if (exercise.archived) {
+        return  exercise.is_in_workout && exercise.in_workouts.includes(workoutId)
+      }
+      return true
+    })
 
     res.statusCode = 200;
-    res.json(createResponse(pickExerciseList(exercises.reverse())));
+    res.json(createResponse(
+      archived 
+        ? pickExerciseList(exercises.reverse()).map((exercise) => {
+          if (exercise.archived) {
+            exercise.title = `${exercise.title} (${lang === 'ru' ? 'удалено' : 'deleted'})`
+          }
+          return exercise
+        })
+        : pickExerciseList(exercises.reverse())
+    ));
   } catch (error) {
     console.log(error);
     res.statusCode = error.code;

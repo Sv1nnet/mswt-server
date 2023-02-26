@@ -43,7 +43,10 @@ const deleteActivity = async (req: IRequestWithUser, res: Response) => {
     })
 
     res.statusCode = 200;
-    res.json(createResponse(pickActivityList(result)));
+    res.json(createResponse({
+      total: result.length,
+      list: pickActivityList(result)
+    }));
   } catch (error) {
     console.log(error);
     res.statusCode = error.code;

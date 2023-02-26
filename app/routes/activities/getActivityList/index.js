@@ -20,10 +20,10 @@ const getActivityList = async (req, res) => {
     page = +page
     byPage = +byPage
     const startIndex = ((page - 1) * byPage)
-    const endIndex = startIndex + (byPage + 1)
+    const endIndex = startIndex + (byPage)
 
     let activities = await Activity.find({ '_id': { $in: user.activities.slice(startIndex, endIndex) } }).limit(31)
-    console.log(`user.activities.slice(${startIndex}, ${endIndex})`, user.activities.slice(startIndex, endIndex))
+    const total = user.activities.length
     const workoutsInActivities = await Workout.find({ '_id': { $in: activities.map(activity => Types.ObjectId(activity.workout_id)) }})
     activities = activities.sort((a, b) => b._doc.index - a._doc.index).map(activity => ({ ...activity._doc, workout_title: workoutsInActivities.find(workout => workout._id.toString() === activity.workout_id).title }))
 
@@ -52,7 +52,10 @@ const getActivityList = async (req, res) => {
     })
 
     res.statusCode = 200;
-    res.json(createResponse(pickActivityList(activities)));
+    res.json(createResponse({
+      total,
+      list: pickActivityList(activities),
+    }));
   } catch (error) {
     console.log(error);
     res.statusCode = error.code;

@@ -53,13 +53,7 @@ const updateExercise = async (req: IRequestWithUser, res: Response) => {
     }
 
     const workouts: IWorkout[] = await Workout.find({ '_id': { $in: user.workouts }})
-
-    if (workouts.find((workout) => workout.exercises.find(exercise => exercise_id === exercise.id))) {
-      throw createRequestError(
-        'Exercises can not be changed',
-        createResponseError('unableToUpdateExercise', 400),
-      )
-    }
+    const isInWorkout = !!workouts.find((workout) => workout.exercises.find(exercise => exercise_id === exercise.id))
 
     const form = formidable()
     form.parse(req, async (err, fields, files) => {
@@ -120,8 +114,9 @@ const updateExercise = async (req: IRequestWithUser, res: Response) => {
           url: '',
           uploaded_at: Date.now(),
         })
-        exercise.updateExercise({ ...form.main as TypeExercise, image })
 
+        exercise.updateExercise({ ...form.main as TypeExercise, image })
+        
         if (image_uid) {
           const { userDir, targetDir } = getTargetAndUserDir()
           let filesInDir = []
@@ -157,10 +152,16 @@ const updateExercise = async (req: IRequestWithUser, res: Response) => {
         }
       } else {
         form.main.image 
-          ? exercise.updateExercise({ ...form.main as TypeExercise, image: exercise.image })
+          ? isInWorkout
+            ? exercise.updateExercise({ ...({ title: form.main.title, description: form.main.description } as TypeExercise), image: exercise.image })
+            : exercise.updateExercise({ ...form.main as TypeExercise, image: exercise.image })
           : (() => {
             console.log('targetDir', getTargetAndUserDir().targetDir)
-            exercise.updateExercise({ ...form.main as TypeExercise })
+            if (isInWorkout) {
+              exercise.updateExercise({ ...({ title: form.main.title, description: form.main.description } as TypeExercise) })
+            } else {
+              exercise.updateExercise({ ...form.main as TypeExercise })
+            }
             fs.rmSync(getTargetAndUserDir().targetDir, { recursive: true, force: true })
           })()
       }

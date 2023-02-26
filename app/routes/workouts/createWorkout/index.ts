@@ -8,6 +8,7 @@ import { pickWorkout } from '@/app/utils/pickObjectFromMDBDoc';
 import { Types } from 'mongoose';
 import Workout from '@/app/models/Workout';
 import getUserOrThrow from '@/app/utils/getUserOrThrow';
+import { IExercise } from '@/app/models/Exercise/types';
 
 type User = {
   id: string;
@@ -28,7 +29,7 @@ console.log('body', body)
   try {
     let user = await getUserOrThrow(id)
 
-    const exercises = await Exercise.find({
+    const exercises: IExercise[] = await Exercise.find({
       _id: {
         $in: body.exercises.map(exercise => Types.ObjectId(exercise.id)),
       }
@@ -45,6 +46,16 @@ console.log('body', body)
 
     user.addWorkout(workout)
     user = await user.save()
+
+    const updatedExercises = await Promise.all(exercises.map(async (exercise: IExercise) => {
+      exercise.updateExercise({
+        is_in_workout: true,
+        in_workouts: [ ...exercise.in_workouts, workout._id ]
+      })
+      return await exercise.save()
+    }))
+
+    console.log('udpatedExercises', updatedExercises)
 
     res.statusCode = 200;
     res.json(createResponse(pickWorkout(workout)));

@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
-import _ from 'lodash';
+import { Request, Response, raw } from 'express';
+import _, { update } from 'lodash';
 import Exercise from 'models/Exercise';
 import { IExercise } from 'models/Exercise/types';
 import User from 'models/User';
 import { IUser } from 'models/User/types';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { createRequestError, createResponseError } from 'utils/createResponseError';
 import { createResponse } from '@/app/utils/createResponse';
 import { pickExercise, pickExerciseList, pickImage, pickWorkout, pickWorkoutList } from '@/app/utils/pickObjectFromMDBDoc';
@@ -20,8 +20,6 @@ const deleteWorkout = async (req, res) => {
   const { id: workout_id } = req.params
   let { ids } = req.body
 
-  console.log('delete workout', workout_id, ids)
-
   try {
     let user = await getUserOrThrow(id)
 
@@ -34,7 +32,18 @@ const deleteWorkout = async (req, res) => {
 
     ids = [].concat(workout_id || ids)
 
-    await Workout.updateMany({ _id: { $in: ids } }, { $set: { archived: true } }, {multi: true })
+    await Workout.updateMany({ _id: { $in: ids } }, { $set: { archived: true } }, { multi: true })
+    const updatedWorkouts = await Workout.find({ _id: { $in: ids.map(id => Types.ObjectId(id)) }})
+
+    for (const workout of updatedWorkouts) {
+      const exerciseIdArr = [...workout.exercises].map(_e => _e.id)
+      const exercises = await Exercise.find({ _id: { $in: exerciseIdArr }})
+
+      for (const exercise of exercises) {
+        exercise.removeFromWorkout(workout._id)
+        await exercise.save()
+      }
+    }
 
     const workouts = (await Workout.find({ '_id': { $in: user.workouts }, archived: { $ne: true } })).map((workout) => {
       const _workout = pickWorkout(workout._doc)
@@ -47,6 +56,7 @@ const deleteWorkout = async (req, res) => {
         .all([...workouts].map(async (workout) => {
           const exerciseIdArr = [...workout.exercises].map(_e => _e.id)
           const rawExercises = await Exercise.find({ _id: { $in: exerciseIdArr }})
+
           const sortedRawExercises = []
 
           exerciseIdArr.forEach((_id, i) => {
@@ -62,6 +72,7 @@ const deleteWorkout = async (req, res) => {
               image: pickImage(picked.image),
             }
           })
+          
           return {
             ...workout,
             exercises: workout.exercises.map((exercise, i) => ({
