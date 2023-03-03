@@ -21,7 +21,7 @@ export const WorkoutExerciseSchema = new Schema<IWorkoutExercise>({
   break_enabled: {
     type: Boolean,
     required: true,
-  },
+  }
 })
 
 export const WorkoutExerciseModel = mongoose.models.ImageModel || mongoose.model<IWorkoutExercise>('WorkoutExercise', WorkoutExerciseSchema);
@@ -44,11 +44,33 @@ const WorkoutSchema = new Schema<IWorkout>({
     type: Boolean,
     dafault: false,
   },
+  is_in_activity: {
+    type: Boolean,
+    default: false,
+  },
+  in_activities: {
+    type: [mongoose.Schema.Types.ObjectId],
+    default: [],
+  },
 });
+
+WorkoutSchema.methods.addActivity = function addActivity(activityId) {
+  const workout = this;
+  workout.is_in_activity = true;
+  workout.in_activities.push(activityId)
+}
 
 WorkoutSchema.methods.updateWorkout = function updateWorkout(data) {
   const workout = this;
   Object.assign(workout, data);
+}
+
+WorkoutSchema.methods.removeFromActivity = function removeFromActivity(activityId) {
+  const workout = this;
+  workout.in_activities = workout.in_activities?.filter(_activityId => _activityId.toString() !== activityId.toString()) || []
+  if (workout.in_activities.length === 0) {
+    workout.is_in_activity = false
+  }
 }
 
 const WorkoutModel = mongoose.models.Workout || mongoose.model<IWorkout>('Workout', WorkoutSchema);

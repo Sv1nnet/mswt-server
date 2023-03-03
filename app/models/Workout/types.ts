@@ -11,14 +11,20 @@ export interface IWorkoutExercise extends Document {
 export type Workout = {
   title: string;
   exercises: IWorkoutExercise[];
+  is_in_activity: boolean;
+  in_activities: Document["_id"][];
   description?: string;
 };
 
 export interface IWorkout extends Document {
   title: string;
   exercises: IWorkoutExercise[];
+  is_in_activity: boolean;
+  in_activities: Document["_id"][];
   description?: string;
   archived?: boolean;
 
-  updateWorkout(data: Workout): void;
+  updateWorkout(data: Partial<Workout>): void;
+  addActivity(activityId: string | Document["_id"]): void;
+  removeFromActivity(activityId: string | Document["_id"]): void;
 }

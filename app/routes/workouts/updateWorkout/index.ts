@@ -41,13 +41,6 @@ const updateWorkout = async (req: IRequestWithUser, res: Response) => {
 
     const activities: IActivity[] = await Activity.find({ '_id': { $in: user.activities }})
 
-    if (activities.find((activity) => activity.workout_id === workout_id)) {
-      throw createRequestError(
-        'Workout can not be changed',
-        createResponseError('unableToUpdateWorkout', 400),
-      )
-    }
-
     let workout: IWorkout = await Workout.findOne({ _id: workout_id })
     if (!workout) {
       throw createRequestError(
@@ -56,7 +49,19 @@ const updateWorkout = async (req: IRequestWithUser, res: Response) => {
       );
     }
 
-    workout.updateWorkout(body)
+    if (activities.find((activity) => activity.workout_id === workout_id)) {
+      workout.updateWorkout({
+        ...body,
+        exercises: body.exercises.map((exercise, index) => ({
+          ...workout.exercises[index]["_doc"],
+          round_break: exercise.round_break,
+          break: exercise.break,
+          break_enabled: exercise.break_enabled,
+        }))
+      })
+    } else {
+      workout.updateWorkout(body)
+    }
 
     workout = await workout.save()
     

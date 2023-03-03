@@ -8,6 +8,8 @@ import { createRequestError, createResponseError } from 'utils/createResponseErr
 import { createResponse } from '@/app/utils/createResponse';
 import { pickActivityList } from '@/app/utils/pickObjectFromMDBDoc';
 import getUserOrThrow from '@/app/utils/getUserOrThrow';
+import Workout from '@/app/models/Workout';
+import { IWorkout } from '@/app/models/Workout/types';
 
 type User = {
   id: string;
@@ -29,7 +31,8 @@ const deleteActivity = async (req: IRequestWithUser, res: Response) => {
 
     ids = [].concat(activity_id || ids)
     const newActivities = user.deleteActivities(ids)
-    user = await user.save()
+
+    const activitiesToDelete: IActivity[] = await Activity.find({ _id: { $in: ids }})
 
     const result = await new Promise<IActivity[]>((resolve, reject) => {
       Activity.deleteMany({ _id: { $in: ids } }, (err) => {
@@ -41,6 +44,16 @@ const deleteActivity = async (req: IRequestWithUser, res: Response) => {
         } else reject(err)
       })
     })
+
+    user = await user.save()
+
+    for (const activity of activitiesToDelete) {
+      const activityId = activity._id
+      const workoutId = activity.workout_id
+      const workout: IWorkout = await Workout.findOne({ _id: workoutId })
+      workout.removeFromActivity(activityId)
+      await workout.save()
+    }
 
     res.statusCode = 200;
     res.json(createResponse({

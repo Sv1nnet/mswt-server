@@ -15,6 +15,7 @@ import formatFormData from '@/app/utils/formatFormData';
 import { nanoid } from 'nanoid'
 import { Types } from 'mongoose';
 import getUserOrThrow from '@/app/utils/getUserOrThrow';
+import { IWorkout } from '@/app/models/Workout/types';
 
 type User = {
   id: string;
@@ -68,10 +69,12 @@ const createActivity = async (req: RequestWithUser, res: Response) => {
       index: new Date(body.date).valueOf(),
     }).save()
 
-    
+    workout.addActivity(activity._id)
+    await workout.save()
+
     user.addActivity(activity)
     const activities = await Activity.find({ '_id': { $in: user.activities } })
-    console.log(user.updateActivitiesOrderByIndex(activities))
+    user.updateActivitiesOrderByIndex(activities)
     user = await user.save()
 
     res.statusCode = 200;
