@@ -13,6 +13,6 @@ export const pickImage = (image: IImage) => ({ ..._.pick(image, [ 'uid', 'uuid',
 export const pickWorkout = (workout: IWorkout) => ({ id: workout._id, ..._.pick(workout, ['title', 'exercises', 'description', 'is_in_activity']) });
 export const pickWorkoutList = (workouts: any[]) => workouts.map(pickWorkout);
 export const pickWorkoutExercise = (workoutExercise: IWorkoutExercise) => ({ id: workoutExercise._id, ..._.pick(workoutExercise, ['rounds', 'round_break', 'break', 'break_enabled']) });
-export const pickActivity = (activity: IActivity) => ({ id: activity._id, ..._.pick(activity, ['workout_id', 'workout_title', 'date', 'results', 'description']) }); 
+export const pickActivity = (activity: IActivity) => ({ id: activity._id, ..._.pick(activity, ['workout_id', 'duration', 'workout_title', 'date', 'results', 'description']) }); 
 export const pickActivityList = (activities: any[]) => activities.map(pickActivity);
 // export const pickActivityExercise = (activityExercise: IWorkoutExercise) => ({ id: activityExercise._id, ..._.pick(activityExercise, ['rounds', 'round_break', 'break', 'break_enabled']) });

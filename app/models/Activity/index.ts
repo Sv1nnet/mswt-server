@@ -60,6 +60,10 @@ const ActivitySchema = new Schema<IActivity>({
   description: {
     type: String,
     required: false,
+  },
+  duration: {
+    type: Number,
+    default: 0,
   }
 });
 

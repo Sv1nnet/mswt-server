@@ -18,6 +18,7 @@ export type Activity = {
   results: IActivityExercise[];
   description: string;
   index: number;
+  duration: number;
 };
 
 export interface IActivity extends Activity, Document {
