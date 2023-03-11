@@ -42,7 +42,7 @@ const WorkoutSchema = new Schema<IWorkout>({
   },
   archived: {
     type: Boolean,
-    dafault: false,
+    default: false,
   },
   is_in_activity: {
     type: Boolean,
