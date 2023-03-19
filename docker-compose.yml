@@ -8,7 +8,7 @@ services:
     networks:
       - server_mswt
   server:
-    image: mswt-server_srv
+    image: mswt-server_prod
     hostname: server
     environment:
       MONGODB_URI: mongodb://root:example@mongo:27017

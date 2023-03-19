@@ -46,7 +46,8 @@ const getExerciseList = async (req: IRequestWithUser, res: Response) => {
 
     res.statusCode = 200;
     res.json(createResponse(
-      archived 
+      (
+        archived 
         ? pickExerciseList(exercises.reverse()).map((exercise) => {
           if (exercise.archived) {
             exercise.title = `${exercise.title} (${lang === 'ru' ? 'удалено' : 'deleted'})`
@@ -54,6 +55,11 @@ const getExerciseList = async (req: IRequestWithUser, res: Response) => {
           return exercise
         })
         : pickExerciseList(exercises.reverse())
+      ).sort((a, b) => {
+        if (a.title > b.title) return 1
+        else if (a.title < b.title) return -1
+        return 0
+      })
     ));
   } catch (error) {
     console.log(error);
