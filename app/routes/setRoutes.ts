@@ -35,6 +35,7 @@ export default function setRoutes() {
   // exercise
   router.post('/v1/exercise/create', withAccessVerify, exercise.createExercise);
   router.patch('/v1/exercise/update/:id', withAccessVerify, exercise.updateExercise);
+  router.post('/v1/exercise/copy', withAccessVerify, exercise.copyExercise);
   router.get('/v1/exercise/list', withAccessVerify, exercise.getExerciseList);
   router.get('/v1/exercise/:id', withAccessVerify, exercise.getExercise);
   router.delete('/v1/exercise/delete', withAccessVerify, exercise.deleteExercise);
@@ -43,6 +44,7 @@ export default function setRoutes() {
   // workout
   router.post('/v1/workout/create', withAccessVerify, workout.createWorkout)
   router.patch('/v1/workout/update/:id', withAccessVerify, workout.updateWorkout)
+  router.post('/v1/workout/copy', withAccessVerify, workout.copyWorkout);
   router.get('/v1/workout/list', withAccessVerify, workout.getWorkoutList)
   router.get('/v1/workout/:id', withAccessVerify, workout.getWorkout)
   router.delete('/v1/workout/delete', withAccessVerify, workout.deleteWorkout)

@@ -13,6 +13,8 @@ export interface IImage extends Document {
 export type Exercise = {
   title: string;
   each_side: boolean;
+  hours: boolean;
+  mass_unit: 'kg' | 'lb';
   is_in_workout: boolean;
   in_workouts: Document["_id"][];
   type?: 'repeats' | 'time' | 'duration' | 'distance';
@@ -25,6 +27,8 @@ export type Exercise = {
 export interface IExercise extends Document {
   title: string;
   each_side: boolean;
+  hours: boolean;
+  mass_unit: 'kg' | 'lb';
   is_in_workout: boolean;
   in_workouts: Document["_id"][];
   type?: 'repeats' | 'time' | 'duration' | 'distance';
@@ -36,5 +40,5 @@ export interface IExercise extends Document {
 
   updateExercise(data: Partial<Exercise>): void;
   updateImage(data: Partial<IImage>): void;
-  removeFromWorkout(wokroutId: Document["_id"]): void;
+  removeFromWorkout(workoutId: Document["_id"]): void;
 }

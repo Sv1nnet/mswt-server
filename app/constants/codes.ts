@@ -35,6 +35,27 @@ export const errors = {
       eng: 'Code not found'
     }
   },
+  exerciseToCopyNotFound: {
+    code: 4046,
+    message: {
+      ru: 'Упражнение для копирования не найдено',
+      eng: 'Exercise to copy not found',
+    }
+  },
+  activityToCopyNotFound: {
+    code: 4047,
+    message: {
+      ru: 'Активность для копирования не найдено',
+      eng: 'activity to copy not found',
+    }
+  },
+  workoutToCopyNotFound: {
+    code: 4048,
+    message: {
+      ru: 'Тренировка для копирования не найдено',
+      eng: 'Workout to copy not found',
+    }
+  },
 
   // Auth errors
   tokenExpired: { // access token expired

@@ -40,6 +40,14 @@ const ExerciseSchema = new Schema<IExercise>({
     type: String,
     required: true,
   },
+  created_at: {
+    type: String,
+    required: false,
+  },
+  updated_at: {
+    type: String,
+    required: false,
+  },
   description: {
     type: String,
     required: false,
@@ -88,7 +96,7 @@ const ExerciseSchema = new Schema<IExercise>({
   },
   archived: {
     type: Boolean,
-    dafault: false,
+    default: false,
   },
 });
 

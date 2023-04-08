@@ -3,6 +3,7 @@ import getExercise from "./getExercise";
 import getExerciseList from "./getExerciseList";
 import deleteExercise from "./deleteExercise";
 import updateExercise from "./updateExercise";
+import copyExercise from "./copyExercise";
 
 export {
   createExercise,
@@ -10,4 +11,5 @@ export {
   getExerciseList,
   deleteExercise,
   updateExercise,
+  copyExercise,
 }

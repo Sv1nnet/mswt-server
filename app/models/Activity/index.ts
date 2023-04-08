@@ -42,7 +42,7 @@ const ActivitySchema = new Schema<IActivity>({
   },
   created_at: {
     type: String,
-    requred: false,
+    required: false,
   },
   updated_at: {
     type: String,

@@ -3,6 +3,7 @@ import getWorkout from "./getWorkout";
 import getWorkoutList from "./getWorkoutList";
 import deleteWorkout from "./deleteWorkout";
 import updateWorkout from "./updateWorkout";
+import copyWorkout from "./copyWorkout";
 
 export {
   createWorkout,
@@ -10,4 +11,5 @@ export {
   getWorkoutList,
   deleteWorkout,
   updateWorkout,
+  copyWorkout,
 }
