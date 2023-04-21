@@ -16,6 +16,8 @@ import fs from 'fs'
 import path from 'path'
 import { IActivity } from '@/app/models/Activity/types';
 import getUserOrThrow from '@/app/utils/getUserOrThrow';
+import ExerciseModel from '@/app/models/Exercise';
+import { IExercise } from '@/app/models/Exercise/types';
 
 type User = {
   id: string;
@@ -49,6 +51,8 @@ const updateWorkout = async (req: IRequestWithUser, res: Response) => {
       );
     }
 
+    const exercisesInWorkout = [ ...workout.exercises ]
+
     if (activities.find((activity) => activity.workout_id === workout_id)) {
       workout.updateWorkout({
         ...body,
@@ -63,12 +67,23 @@ const updateWorkout = async (req: IRequestWithUser, res: Response) => {
       workout.updateWorkout(body)
     }
 
-    workout = await workout.save()
+    const updatedWorkout = await workout.save()
+
+    const removedExercises = exercisesInWorkout.filter(exercise => !updatedWorkout.exercises.find(exr => exr.id === exercise.id)).map(exercise => exercise.id)
+    if (removedExercises.length) {
+      console.log('removedExercises', removedExercises)
+      const exercisesToUpdate: IExercise[] = await ExerciseModel.find({ _id: { $in: removedExercises }})
+      console.log('exercisesToUpdate', exercisesToUpdate)
+      await Promise.all(exercisesToUpdate.map(async exercise => {
+        exercise.removeFromWorkout(workout_id)
+        console.log((await exercise.save()))
+      }))
+    }
     
     user = await user.save()
 
     res.statusCode = 200;
-    res.json(createResponse(pickWorkout(workout)));
+    res.json(createResponse(pickWorkout(updatedWorkout)));
   } catch (error) {
     console.log(error);
     res.statusCode = error.code;
