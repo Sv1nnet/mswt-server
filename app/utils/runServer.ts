@@ -34,17 +34,17 @@ const runServer = async ({ app }) => {
             }
           })
           .catch((err) => {
-            console.error("Error occured while trying to initialized signup codes");
+            console.error("Error occurred while trying to initialized signup codes");
             console.error("Error message", err.message);
             console.error("Errorcustom message", err.customMessage);
           });
         res(value);
       } else {
         console.warn("could not connect to DB", value?.err);
-        timeout = setTimeout(connect);
+        timeout = setTimeout(connect, 5000);
       }
     };
-    timeout = setTimeout(connect);
+    timeout = setTimeout(connect, 5000);
   });
 
   if (con) {
