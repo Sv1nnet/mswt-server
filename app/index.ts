@@ -34,6 +34,11 @@ if (process.env.NODE_ENV !== 'production') {
     res.header("Access-Control-Expose-Headers", "Set-Cookie");
     next();
   });
+} else {
+  app.use(cors({
+    origin: [ 'mswt-client_prod', process.env.CLIENT_ADDRESS ],
+    credentials: true,
+  }))
 }
 // }
 
@@ -42,7 +47,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
-  if (req.method !== "OPTIONS") console.log("Incoming request", req.method, req.url);
+  if (req.method !== "OPTIONS") console.log("Incoming request", req.method, req.ip, req.url);
   next();
 });
 
