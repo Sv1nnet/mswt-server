@@ -31,8 +31,6 @@ type Form = {
   image_uid?: string
 }
 
-const MAX_IMAGE_SIDE_SIZE = 250
-
 // use after withAccess
 const createExercise = async (req: RequestWithUser, res: Response) => {
   const { id } = req.user;
