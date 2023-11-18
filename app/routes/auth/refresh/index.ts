@@ -26,9 +26,8 @@ const refresh = async (req: RefreshRequest, res: Response) => {
     await user.save();
 
     res.statusCode = 200;
-    console.log('refresh success 200', createResponse({ token: tokens.access }))
     res.cookie('refresh_token', tokens.refresh, { secure: false, httpOnly: true, expires: new Date(Date.now() + DAYS_30) })
-    res.cookie('access_token', tokens.access, { secure: false, httpOnly: true, expires: new Date(Date.now() + DAYS_30) })
+    res.cookie('access_token', tokens.access, { secure: false, httpOnly: false, expires: new Date(Date.now() + DAYS_30) })
     res.json(createResponse({ token: tokens.access }));
   } catch (error) {
     console.log(error);

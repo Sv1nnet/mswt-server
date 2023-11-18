@@ -1,12 +1,13 @@
 /** @format */
 
-import { signupCodes } from "../constants/signup_codes";
+// import { signupCodes } from "../constants/signup_codes";
 import SignupCode from "../models/SignupCode";
 import dbConnect, { DBConnect } from "./db/dbConnect";
 import { url } from "../constants/routes";
 
 const dbConnection = dbConnect();
 const PORT = +process.env.SERVER_PORT;
+const signupCodes = process.env.SIGNUP_CODES.split('-')
 
 const runServer = async ({ app }) => {
   const { con, err } = await new Promise<DBConnect>((res) => {
@@ -36,7 +37,7 @@ const runServer = async ({ app }) => {
           .catch((err) => {
             console.error("Error occurred while trying to initialized signup codes");
             console.error("Error message", err.message);
-            console.error("Errorcustom message", err.customMessage);
+            console.error("Error custom message", err.customMessage);
           });
         res(value);
       } else {

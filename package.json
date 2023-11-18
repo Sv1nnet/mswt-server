@@ -4,6 +4,7 @@
   "description": "Auth server",
   "main": "index.js",
   "scripts": {
+    "docker-build:prod": "docker build -t mswt-server_prod .",
     "serve:prod": "NODE_ENV=production nodemon ./app/index.ts",
     "serve:dev": "NODE_ENV=development nodemon ./app/index.ts",
     "serve:docker": "NODE_ENV=doc-development nodemon ./app/index.ts",
@@ -39,6 +40,7 @@
     "express": "^4.17.1",
     "formidable": "^2.0.1",
     "fs-extra": "^10.0.1",
+    "jimp": "^0.22.10",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
     "module-alias": "^2.2.2",

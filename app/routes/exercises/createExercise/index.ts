@@ -12,6 +12,10 @@ import path from 'path'
 import formatFormData from '@/app/utils/formatFormData';
 import { nanoid } from 'nanoid'
 import getUserOrThrow from '@/app/utils/getUserOrThrow';
+import Jimp from 'jimp';
+import { resizeImage } from '@/app/utils/resizeImage';
+import { saveImage } from '@/app/utils/saveImage';
+import { getTargetAndUserDir } from '@/app/utils/getTargetAndUserDir';
 
 type User = {
   id: string;
@@ -26,6 +30,8 @@ interface RequestWithUser extends Request {
 type Form = {
   image_uid?: string
 }
+
+const MAX_IMAGE_SIDE_SIZE = 250
 
 // use after withAccess
 const createExercise = async (req: RequestWithUser, res: Response) => {
@@ -64,38 +70,21 @@ const createExercise = async (req: RequestWithUser, res: Response) => {
         })
         
         if (image_uid) {
-          const userDir = path.join((global as typeof globalThis).appRoot, 'uploads', id)
-          const targetDir = path.join(userDir, exercise._id.toString())
-          let filesInDir = []
-    
-          if (!fs.existsSync(userDir)){
-            fs.mkdirSync(userDir);
-            if (!fs.existsSync(targetDir)) {
-              fs.mkdirSync(targetDir);
-            }
-          } else {
-            if (!fs.existsSync(targetDir)) {
-              fs.mkdirSync(targetDir);
-            }
-            filesInDir = fs.readdirSync(targetDir);
-          }
-    
-          const targetPath = `${path.join(targetDir, fileName)}`
-    
-          exercise.updateImage({ url: `/uploads/${id}/${exercise._id.toString()}/${encodeURI(fileName)}`, })
-    
+          const { userDir, targetDir } = getTargetAndUserDir(exercise, id)
+
           const rawData = fs.readFileSync(files.image.filepath)
-    
-          fs.writeFile(targetPath, rawData, (err) => {
-            if (err) {
-              throw createRequestError(
-                'Cannot save an image',
-                createResponseError('unableToSaveImage', 400),
-              )
-            } else {
-              filesInDir.forEach(file => fs.unlinkSync(path.join(targetDir, file)))
-            }
-          })
+
+          let filesAfterResize = {
+            fileToSave: rawData,
+            filesInDir: []
+          }
+          
+          try {
+            filesAfterResize = await resizeImage(rawData, userDir, targetDir, filesAfterResize)
+            saveImage(exercise, id, filesAfterResize, targetDir, fileName)
+          } catch (readImgErr) {
+            console.log('error in resizing image', readImgErr)
+          }
         }
       } else {
         exercise = await new Exercise({ ...form })

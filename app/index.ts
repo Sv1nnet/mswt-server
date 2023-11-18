@@ -53,6 +53,19 @@ app.use((req, res, next) => {
 
 app.use(API, setRoutes());
 
-app.get("/", (req, res) => res.send("Express + TypeScript Server"));
-
 runServer({ app });
+
+// if (process.env.NODE_ENV === 'production') {
+  // const distServer = express();
+  
+  // distServer.use(express.static(path.join(__dirname, "../client/dist")));
+  
+  // // send html file, manifest and other static and assets files
+  // distServer.get("*", (req, res) => {
+  //   res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+  // });
+  
+  // distServer.listen(process.env.CLIENT_PORT, () => {
+  //   console.log('Serving dist server on port', process.env.CLIENT_PORT)
+  // });
+// }
