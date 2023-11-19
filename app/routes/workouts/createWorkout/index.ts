@@ -24,7 +24,6 @@ interface RequestWithUser extends Request {
 const createWorkout = async (req: RequestWithUser, res: Response) => {
   const { id } = req.user;
   const { body } = req
-console.log('body', body)
 
   try {
     let user = await getUserOrThrow(id)
@@ -54,8 +53,6 @@ console.log('body', body)
       })
       return await exercise.save()
     }))
-
-    console.log('udpatedExercises', updatedExercises)
 
     res.statusCode = 200;
     res.json(createResponse(pickWorkout(workout)));

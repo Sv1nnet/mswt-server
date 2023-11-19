@@ -7,31 +7,36 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
     networks:
       - server_mswt
+
   server:
     image: mswt-server_prod
-    hostname: server
-    environment:
-      MONGODB_URI: mongodb://root:example@mongo:27017
-      DB_NAME: mswt
-      SERVER_PORT: 3005
-      JWT_ACCESS_SECRET: access-secret
-      JWT_REFRESH_SECRET: refresh-secret
+    env_file:
+     - .env
     ports:
       - 3005:3005
     depends_on:
       - mongo
     networks:
       - server_mswt
+    volumes:
+      - uploads:/uploads
+
   client:
     image: mswt-client_prod
     ports:
-      - 3004:3004
+      - 80:80
+      - 443:443
     depends_on:
       - server
-    environment:
-      SERVER_URL: http://server:3005
     networks:
       - server_mswt
+    volumes:
+      - ssl_certs:/etc/nginx/ssl  # Mount the SSL certificates volume
+
 networks:
   server_mswt:
     driver: bridge
+
+volumes:
+  uploads:
+  ssl_certs:

@@ -4,6 +4,8 @@
   "description": "Auth server",
   "main": "index.js",
   "scripts": {
+    "run-prod": "docker-compose -f docker-compose.prod.yml up",
+    "run-prod:local": "docker-compose -f docker-compose.prod.local.yml up",
     "docker-build:prod": "docker build -t mswt-server_prod .",
     "serve:prod": "NODE_ENV=production nodemon ./app/index.ts",
     "serve:dev": "NODE_ENV=development nodemon ./app/index.ts",

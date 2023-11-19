@@ -43,7 +43,7 @@ const copyExercise = async (req: RequestWithUser, res: Response) => {
         createResponseError('exerciseToCopyNotFound', 404),
       )
     }
-    console.log("exercises", exercises)
+
     await Promise.all(exercises.map(async (exercise) => {
       const exr = exercise.toObject()
       let newExercise = await new Exercise({

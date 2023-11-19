@@ -71,12 +71,11 @@ const updateWorkout = async (req: IRequestWithUser, res: Response) => {
 
     const removedExercises = exercisesInWorkout.filter(exercise => !updatedWorkout.exercises.find(exr => exr.id === exercise.id)).map(exercise => exercise.id)
     if (removedExercises.length) {
-      console.log('removedExercises', removedExercises)
       const exercisesToUpdate: IExercise[] = await ExerciseModel.find({ _id: { $in: removedExercises }})
-      console.log('exercisesToUpdate', exercisesToUpdate)
+
       await Promise.all(exercisesToUpdate.map(async exercise => {
         exercise.removeFromWorkout(workout_id)
-        console.log((await exercise.save()))
+        await exercise.save()
       }))
     }
     

@@ -8,7 +8,7 @@ const DAYS_30 = 30 * 24 * 60 * 60 * 1000
 
 const login = async (req: Request<Credentials>, res: Response) => {
   const { password, email, settings } = req.body;
-  console.log('req.body', req.body)
+
   try {
     let user: IUser = await User.findOne({ email });
     if (!user) throw createRequestError('User not found', createResponseError('userNotFound', 404));

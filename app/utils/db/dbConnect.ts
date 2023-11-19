@@ -44,7 +44,6 @@ async function* dbConnect() {
                   if (err) {
                     throw err;
                   }
-                  console.log("User created successfully");
                   res(void 0);
                   client.close();
                 }

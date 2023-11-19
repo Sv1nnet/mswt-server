@@ -51,8 +51,8 @@ const withRefreshVerify = (req: IReqWithRefreshToken, res: Response, next: NextF
   
       console.log('Error while token validation', err ? err.message : err);
       res.statusCode = 403;
-      res.cookie('refresh_token', '', { secure: false, httpOnly: true, expires: new Date() })
-      res.cookie('access_token', '', { secure: false, httpOnly: true, expires: new Date() })
+      res.cookie('refresh_token', '', { secure: false, httpOnly: true, expires: new Date(), domain: process.env.CLIENT_ADDRESS })
+      res.cookie('access_token', '', { secure: false, httpOnly: true, expires: new Date(), domain: process.env.CLIENT_ADDRESS })
       res.json({ message: err ? err.message : 'Token is invalid' });
     } catch (error) {
       if (error?.name === 'ValidationError') {

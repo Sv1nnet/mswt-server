@@ -80,7 +80,6 @@ const createActivity = async (req: RequestWithUser, res: Response) => {
     res.statusCode = 200;
     res.json(createResponse(pickActivity(activity)));
   } catch (error) {
-    console.log('create workout', error.message);
     if (error?.name === 'ValidationError') {
       error = createRequestError('Invalid form data', createResponseError('invalidFormData', 400))
     }

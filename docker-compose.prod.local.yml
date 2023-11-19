@@ -1,0 +1,38 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:4
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    networks:
+      - server_mswt
+
+  server:
+    image: mswt-server_prod
+    env_file:
+     - .env
+    ports:
+      - 3005:3005
+    depends_on:
+      - mongo
+    networks:
+      - server_mswt
+    volumes:
+      - uploads:/uploads
+
+  client:
+    image: mswt-client_prod-local
+    ports:
+      - 4173:4173
+    depends_on:
+      - server
+    networks:
+      - server_mswt
+
+networks:
+  server_mswt:
+    driver: bridge
+
+volumes:
+  uploads:

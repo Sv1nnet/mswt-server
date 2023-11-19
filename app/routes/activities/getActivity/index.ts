@@ -42,7 +42,6 @@ const getActivity = async (req: IRequestWithUser, res: Response) => {
       )
     }
 
-    console.log('activity results', pickActivity(activity).results)
     res.statusCode = 200;
     res.json(createResponse(pickActivity(activity)));
   } catch (error) {

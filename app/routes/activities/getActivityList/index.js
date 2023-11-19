@@ -8,7 +8,7 @@ import getUserOrThrow from '@/app/utils/getUserOrThrow';
 // use after withAccess
 const getActivityList = async (req, res) => {
   const { id } = req.user;
-  console.log("req.params", req.query)
+
   let { page = 1, byPage = 30, searchValue = '' } = req.query
 
   try {
