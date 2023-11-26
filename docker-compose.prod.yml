@@ -9,7 +9,7 @@ services:
       - server_mswt
 
   server:
-    image: mswt-server_prod
+    image: sv1net/mswt-server_prod
     env_file:
      - .env
     ports:
@@ -20,9 +20,10 @@ services:
       - server_mswt
     volumes:
       - uploads:/uploads
+      - /root/application/mswt-server/.env:/usr/src/app/.env
 
   client:
-    image: mswt-client_prod
+    image: sv1net/mswt-client_prod
     ports:
       - 80:80
       - 443:443
@@ -31,7 +32,9 @@ services:
     networks:
       - server_mswt
     volumes:
-      - ssl_certs:/etc/nginx/ssl  # Mount the SSL certificates volume
+      - /etc/nginx/ssl/ru:/etc/nginx/ssl/ru  # Mount the SSL certificates volume
+      - /etc/nginx/ssl/com:/etc/nginx/ssl/com  # Mount the SSL certificates volume
+      - /root/application/my-simple-workout-tracker/.env.local:/bin/www/dist/.env.local
 
 networks:
   server_mswt:
@@ -39,4 +42,3 @@ networks:
 
 volumes:
   uploads:
-  ssl_certs:
