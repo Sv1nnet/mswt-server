@@ -140,7 +140,7 @@ const updateExercise = async (req: IRequestWithUser, res: Response) => {
             }
   
             try {
-              filesAfterResize = await resizeImage(rawData, userDir, targetDir, filesAfterResize)
+              filesAfterResize = await resizeImage(rawData, userDir, targetDir, fileName, filesAfterResize)
               saveImage(exercise, id, filesAfterResize, targetDir, fileName)
             } catch (readImgErr) {
               console.log('error in resizing image', readImgErr)

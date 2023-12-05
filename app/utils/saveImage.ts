@@ -7,14 +7,21 @@ export const saveImage = (exercise, useId, filesAfterResize, targetDir, fileName
             
   exercise.updateImage({ url: `/uploads/${useId}/${exercise._id.toString()}/${encodeURI(fileName)}`, })
 
+  fs.mkdirSync(targetDir, { recursive: true })
+
+  let error
   fs.writeFile(targetPath, filesAfterResize.fileToSave, (err) => {
     if (err) {
-      throw createRequestError(
+      error = createRequestError(
         'Cannot save an image',
         createResponseError('unableToSaveImage', 400),
       )
     } else {
-      filesAfterResize.filesInDir.forEach(file => fs.unlinkSync(path.join(targetDir, file)))
+      filesAfterResize.filesInDir
+        .filter(file => file !== fileName)
+        .forEach(file => fs.unlinkSync(path.join(targetDir, file)))
     }
   })
+
+  if (error) throw error
 }

@@ -95,7 +95,7 @@ const createExercise = async (req: RequestWithUser, res: Response) => {
             }
             
             try {
-              filesAfterResize = await resizeImage(rawData, userDir, targetDir, filesAfterResize)
+              filesAfterResize = await resizeImage(rawData, userDir, targetDir, fileName, filesAfterResize)
               saveImage(exercise, id, filesAfterResize, targetDir, fileName)
             } catch (readImgErr) {
               console.log('error in resizing image', readImgErr)
@@ -118,7 +118,6 @@ const createExercise = async (req: RequestWithUser, res: Response) => {
     await parseForm();
   } catch (error) {
     console.log('create exercise',error);
-
     if (error?.name === 'ValidationError') {
       error = createRequestError('Invalid form data', createResponseError('invalidFormData', 400))
     }

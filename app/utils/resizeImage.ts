@@ -3,7 +3,7 @@ import fs from 'fs'
 
 export const MAX_IMAGE_SIDE_SIZE = 320
 
-export const resizeImage = async (rawImage, userDir, targetDir, files) => {
+export const resizeImage = async (rawImage, userDir, targetDir, fileName, files) => {
   const jimpImage = await Jimp.read(rawImage)
   const { width, height } = jimpImage.bitmap;
 
@@ -22,8 +22,11 @@ export const resizeImage = async (rawImage, userDir, targetDir, files) => {
       if (!fs.existsSync(targetDir)) {
         fs.mkdirSync(targetDir);
       }
-      files.filesInDir = fs.readdirSync(targetDir);
     }
+  }
+
+  if (fs.existsSync(targetDir)) {
+    files.filesInDir = fs.readdirSync(targetDir);
   }
 
   return files;
