@@ -167,6 +167,13 @@ export const errors = {
       eng: 'Could not delete workout since there is at least one activity with it.'
     }
   },
+  imageToLarge: {
+    code: 4007,
+    message: {
+      ru: 'Изображение слишком большое. Максимальный размер 50 мб.',
+      eng: 'Image is too large. Maxmimum image size is 50mb.'
+    }
+  },
 
   // Server errors
   unknownError: {
