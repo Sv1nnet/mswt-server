@@ -19,7 +19,7 @@ services:
     networks:
       - server_mswt
     volumes:
-      - uploads:/uploads
+      - /root/application/uploads:/app/app/uploads
       - /root/application/mswt-server/.env:/usr/src/app/.env
 
   client:
@@ -40,6 +40,3 @@ services:
 networks:
   server_mswt:
     driver: bridge
-
-volumes:
-  uploads:
